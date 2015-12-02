@@ -10,10 +10,10 @@ find_package(Boost 1.45.0 COMPONENTS filesystem thread system)
 
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
-    find_library(blockstore_lib block_store)
-    add_executable(hey src/saminal.cpp)
-    target_link_libraries(hey ${Boost_LIBRARIES})
-    message("hey there")
+    add_library(saminal src/saminal.cpp)
+    target_link_libraries(saminal ${Boost_LIBRARIES})
+    add_executable(tester test/unit_tests.cpp)
+    target_link_libraries(tester saminal)
 endif()
 
 

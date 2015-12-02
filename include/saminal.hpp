@@ -3,8 +3,8 @@
 
 class Saminal{
 
-private:
     const std::string basic_cmd[4] = {"ls","cd","pwd","cat"};
+
     int ls();
     int cd(std::string* args);
     int pwd();
@@ -14,7 +14,7 @@ private:
     int exec_added(std::string* args);
 
 public:
-    void Run();
+    void run();
 };
 
 
