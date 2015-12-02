@@ -26,35 +26,66 @@ void Saminal::printColor(std::string text,int color){
 }
 
 int Saminal::ls(){
-    fs::directory_iterator end_iter;
-    int lineCount = 0;
-    for(fs::directory_iterator iter(this->currDir); iter != end_iter; iter++){
-        if(iter->path().filename().string()[0] != '.'){
-            lineCount++;
-            if(fs::is_directory(iter->path())){
-                printColor(iter->path().filename().string(),1);
-            }
-            else{
-                 printColor(iter->path().filename().string(),0);
-            }
+    if(fs::exists(currDir)){
+        fs::directory_iterator end_iter;
+        int lineCount = 0;
+        for(fs::directory_iterator iter(this->currDir); iter != end_iter; iter++){
+            if(iter->path().filename().string()[0] != '.'){
+                lineCount++;
+                if(fs::is_directory(iter->path())){
+                    printColor(iter->path().filename().string(),1);
+                }
+                else{
+                     printColor(iter->path().filename().string(),0);
+                }
 
-            std::cout<<"   ";
-            if(lineCount >= 5){
-                lineCount = 0;
-                std::cout<<std::endl;
+                std::cout<<"   ";
+                if(lineCount >= 5){
+                    lineCount = 0;
+                    std::cout<<std::endl;
+                }
             }
         }
+        return 1;
     }
-
-    return -1;
-}
-int Saminal::cd(std::string* args){
+    std::cerr<<"currDir not correct for ls command"<<std::endl;
     return -1;
 }
 
-void Saminal::pwd(){
-    fs::path full_path( fs::initial_path<fs::path>() );
-    std::cout<<full_path.string()<<std::endl;
+int Saminal::cd(std::string args){
+    if(!args.empty()){
+        fs::path relative_move(args);
+
+        if(args[0] == '~'){
+            std::cout<<"inside ~";
+            if(fs::exists(relative_move) && fs::is_directory(relative_move)){
+                this->currDir = relative_move;
+                return 1;
+            }
+        }
+        else{
+            try{
+                fs::path newCurrDir = fs::canonical(relative_move,currDir);
+                if(fs::is_directory(newCurrDir)){
+                    this->currDir = newCurrDir;
+                    return 1;
+                }
+            }
+            catch(...){
+                std::cerr<<"Path "<<relative_move.string()<<" either doesn't exist or is not a directory"<<std::endl;
+                return -1;
+            }
+        }
+        std::cerr<<"Path "<<relative_move.string()<<" either doesn't exist or is not a directory"<<std::endl;
+        return -1;
+    }
+    std::cerr<<"Must pass path to the cd command"<<std::endl;
+    return -1;
+}
+
+int Saminal::pwd(){
+    std::cout<<currDir.string()<<std::endl;
+    return 1;
 }
 
 int Saminal::cat(){
@@ -71,6 +102,7 @@ int Saminal::exec_added(std::string* args){
 }
 
 void Saminal::run(){
+
     return;
 }
 

@@ -6,7 +6,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/thread.hpp>
 #include <stdlib.h>
-//#include <stdexcept>
 #include <exception>
 
 class Saminal{
@@ -16,8 +15,8 @@ class Saminal{
 private:
     Saminal();
     int ls();
-    int cd(std::string* args);
-    void pwd();
+    int cd(std::string args);
+    int pwd();
     int cat();
     std::string* parse_args(std::string* args);
     int exec_basic(std::string* args);

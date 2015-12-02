@@ -5,18 +5,32 @@
 #define private public
 #include "../include/saminal.hpp"
 
+
 using namespace std;
 
-int pwd_tester();
+int basic_cmd_tester();
 
 int main(){
-    Saminal s;
-    s.ls();
+
+    cout<<"STARTING TESTS"<<endl;
+    basic_cmd_tester();
+
+    cout<<"TESTS COMPLETE"<<endl;
 }
 
 int basic_cmd_tester(){
     Saminal s;
-    s.pwd();
-    //cout<<"filaed "<<__LINE__<<" "<<__FILE__<<endl;
+    string testPaths[3] = {"../test","~/samkreter"};
+
+    //test cd/////////////////////////////
+
+    //test empty string
+    assert(s.cd("") == -1);
+
+    //test non existent canonical path
+    assert(s.cd(testPaths[0]) == -1);
     return 1;
 }
+
+
+
