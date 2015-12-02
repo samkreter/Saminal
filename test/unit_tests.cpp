@@ -10,10 +10,11 @@ using namespace std;
 int pwd_tester();
 
 int main(){
-    pwd_tester();
+    Saminal s;
+    s.ls();
 }
 
-int pwd_tester(){
+int basic_cmd_tester(){
     Saminal s;
     s.pwd();
     //cout<<"filaed "<<__LINE__<<" "<<__FILE__<<endl;
