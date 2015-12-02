@@ -4,7 +4,7 @@
 class Saminal{
 
     const std::string basic_cmd[4] = {"ls","cd","pwd","cat"};
-
+private:
     int ls();
     int cd(std::string* args);
     int pwd();

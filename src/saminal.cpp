@@ -22,6 +22,8 @@ int Saminal::cd(std::string* args){
     return -1;
 }
 int Saminal::pwd(){
+    fs::path full_path( fs::initial_path<fs::path>() );
+    std::cout<<full_path.string()<<std::endl;
     return 01;
 }
 int Saminal::cat(){
@@ -38,8 +40,7 @@ int Saminal::exec_added(std::string* args){
 }
 
 void Saminal::run(){
-    fs::path full_path( fs::initial_path<fs::path>() );
-    std::cout<<full_path<<std::endl;
+    this->pwd();
     return;
 }
 

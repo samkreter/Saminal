@@ -1,6 +1,8 @@
 #include <iostream>
 #include <exception>
 
+
+#define private public
 #include "../include/saminal.hpp"
 
 using namespace std;
@@ -13,7 +15,7 @@ int main(){
 
 int pwd_tester(){
     Saminal s;
-    s.run();
-    cout<<"filaed "<<__LINE__<<" "<<__FILE__<<endl;
+    s.pwd();
+    //cout<<"filaed "<<__LINE__<<" "<<__FILE__<<endl;
     return 1;
 }
