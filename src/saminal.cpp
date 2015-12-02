@@ -11,7 +11,7 @@ namespace fs = boost::filesystem;
 
 
 Saminal::Saminal(){
-    currDir = fs::path(getenv("HOME"));
+    currDir = homeDir = fs::path(getenv("HOME"));
     if(!fs::exists(currDir) && !fs::is_directory(currDir)){
          throw std::runtime_error("Error while starting home directory, this is a big issue");
     }
@@ -54,29 +54,32 @@ int Saminal::ls(){
 
 int Saminal::cd(std::string args){
     if(!args.empty()){
-        fs::path relative_move(args);
+        fs::path errorPath("");
 
         if(args[0] == '~'){
-            std::cout<<"inside ~";
-            if(fs::exists(relative_move) && fs::is_directory(relative_move)){
-                this->currDir = relative_move;
+            fs::path newPath(std::string(homeDir.string()) + args.erase(0,1));
+            if(fs::exists(newPath) && fs::is_directory(newPath)){
+                this->currDir = newPath;
                 return 1;
             }
+            errorPath = newPath;
         }
         else{
+            fs::path relative_move(args);
             try{
                 fs::path newCurrDir = fs::canonical(relative_move,currDir);
                 if(fs::is_directory(newCurrDir)){
                     this->currDir = newCurrDir;
                     return 1;
                 }
+                errorPath = newCurrDir;
             }
             catch(...){
                 std::cerr<<"Path "<<relative_move.string()<<" either doesn't exist or is not a directory"<<std::endl;
                 return -1;
             }
         }
-        std::cerr<<"Path "<<relative_move.string()<<" either doesn't exist or is not a directory"<<std::endl;
+        std::cerr<<"Path "<<errorPath.string()<<" either doesn't exist or is not a directory"<<std::endl;
         return -1;
     }
     std::cerr<<"Must pass path to the cd command"<<std::endl;
@@ -102,8 +105,7 @@ int Saminal::exec_added(std::string* args){
 }
 
 void Saminal::run(){
-
-    return;
+    std::cout<<std::string(homeDir.string()).erase(0,1);
 }
 
 

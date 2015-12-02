@@ -12,6 +12,7 @@ class Saminal{
 
     const std::string basic_cmd[4] = {"ls","cd","pwd","cat"};
     boost::filesystem::path currDir;
+    boost::filesystem::path homeDir;
 private:
     Saminal();
     int ls();
