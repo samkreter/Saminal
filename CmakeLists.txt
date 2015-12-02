@@ -1,0 +1,21 @@
+cmake_minimum_required (VERSION 2.8)
+project (Saminal)
+
+set(CMAKE_CXX_FLAGS "--std=c++11 -g -Werror")
+
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+find_package(Boost 1.45.0 COMPONENTS filesystem thread system)
+
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+    find_library(blockstore_lib block_store)
+    add_executable(hey src/saminal.cpp)
+    target_link_libraries(hey ${Boost_LIBRARIES})
+    message("hey there")
+endif()
+
+
+
+
