@@ -11,7 +11,9 @@ typedef int (Saminal::*FnPtr)(std::vector<std::string>);
 
 
 Saminal::Saminal(){
+
     b_cmd_map["ls"] = &Saminal::ls;
+    //insert(std::map<std::string, myFunc>::value_type("test", &Test::TestFunc));
     b_cmd_map["pwd"] = &Saminal::pwd;
     b_cmd_map["cat"] = &Saminal::cat;
     b_cmd_map["cd"] = &Saminal::cd;
@@ -58,9 +60,9 @@ int Saminal::ls(std::vector<std::string> args){
 }
 
 int Saminal::cd(std::vector<std::string> args){
-    if(!args.at(0).empty()){
+    if(!args.at(0).empty() && !args.at(1).empty()){
         fs::path errorPath("");
-        std::string sArg = args.at(0);
+        std::string sArg = args.at(1);
         if(sArg[0] == '~'){
             fs::path newPath(std::string(homeDir.string()) + sArg.erase(0,1));
             if(fs::exists(newPath) && fs::is_directory(newPath)){
@@ -97,9 +99,9 @@ int Saminal::pwd(std::vector<std::string> args){
 }
 
 int Saminal::cat(std::vector<std::string> args){
-    if(!args.at(0).empty()){
+    if(!args.at(0).empty() && !args.at(1).empty()){
         std::string line;
-        std::ifstream myfile(args.at(0));
+        std::ifstream myfile(args.at(1));
         if(myfile.is_open()){
             while(std::getline(myfile,line)){
                std::cout<<line<<std::endl;
@@ -125,7 +127,8 @@ std::vector<std::string> Saminal::parse_args(std::string args){
 }
 
 int Saminal::exec_basic(std::vector<std::string> args){
-    return -1;
+    auto func = b_cmd_map[args.at(0)];
+    return (this->*func)(args);
 }
 int Saminal::exec_added(std::vector<std::string> args){
     return -1;
@@ -141,11 +144,13 @@ int Saminal::check_cmd_exist(std::string cmd){
 }
 
 void Saminal::run(){
+    system("clear");
     std::cout<<"\n\nGet ready for the best terminal experience of your life.....\n\n\n\n";
     while(true){
         std::string command;
         std::vector<std::string> cmd_list;
         //print the pretty command thingy
+        std::cout<<std::endl;
         printColor(fs::current_path().string(),2);
         //the $ makes it seem like a big boy terminal
         std::cout<<"$ ";
