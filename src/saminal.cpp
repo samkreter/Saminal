@@ -11,8 +11,8 @@ namespace fs = boost::filesystem;
 
 
 Saminal::Saminal(){
-    currDir = homeDir = fs::path(getenv("HOME"));
-    if(!fs::exists(currDir) && !fs::is_directory(currDir)){
+    homeDir = fs::path(getenv("HOME"));
+    if(!fs::exists(homeDir) && !fs::is_directory(homeDir)){
          throw std::runtime_error("Error while starting home directory, this is a big issue");
     }
 }
@@ -26,10 +26,10 @@ void Saminal::printColor(std::string text,int color){
 }
 
 int Saminal::ls(){
-    if(fs::exists(currDir)){
+    if(fs::exists(fs::current_path())){
         fs::directory_iterator end_iter;
         int lineCount = 0;
-        for(fs::directory_iterator iter(this->currDir); iter != end_iter; iter++){
+        for(fs::directory_iterator iter(fs::current_path()); iter != end_iter; iter++){
             if(iter->path().filename().string()[0] != '.'){
                 lineCount++;
                 if(fs::is_directory(iter->path())){
@@ -59,7 +59,7 @@ int Saminal::cd(std::string args){
         if(args[0] == '~'){
             fs::path newPath(std::string(homeDir.string()) + args.erase(0,1));
             if(fs::exists(newPath) && fs::is_directory(newPath)){
-                this->currDir = newPath;
+                fs::current_path(newPath);
                 return 1;
             }
             errorPath = newPath;
@@ -67,9 +67,9 @@ int Saminal::cd(std::string args){
         else{
             fs::path relative_move(args);
             try{
-                fs::path newCurrDir = fs::canonical(relative_move,currDir);
+                fs::path newCurrDir = fs::canonical(relative_move,fs::current_path());
                 if(fs::is_directory(newCurrDir)){
-                    this->currDir = newCurrDir;
+                    fs::current_path(newCurrDir);
                     return 1;
                 }
                 errorPath = newCurrDir;
@@ -87,11 +87,18 @@ int Saminal::cd(std::string args){
 }
 
 int Saminal::pwd(){
-    std::cout<<currDir.string()<<std::endl;
+    std::cout<<fs::current_path().string()<<std::endl;
     return 1;
 }
 
 int Saminal::cat(){
+    std::string line;
+    fs::current_path(homeDir);
+    std::ifstream myfile("hey.txt");
+    if(myfile.is_open()){
+        std::getline(myfile,line);
+        std::cout<<line;
+    }
     return -1;
 }
 std::string* Saminal::parse_args(std::string* args){

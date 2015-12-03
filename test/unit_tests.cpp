@@ -15,7 +15,7 @@ int main(){
     cout<<"STARTING TESTS"<<endl;
 
     // Saminal s;
-    // s.run();
+    // s.cat();
     basic_cmd_tester();
 
     cout<<"TESTS COMPLETE"<<endl;
@@ -23,7 +23,7 @@ int main(){
 
 void basic_cmd_tester(){
     Saminal s;
-    string testPaths[3] = {"../test","~/Downloads"};
+    string testPaths[3] = {"../bill","~/Downloads"};
 
     //test cd/////////////////////////////
 

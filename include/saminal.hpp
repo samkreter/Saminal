@@ -4,9 +4,11 @@
 #include <iostream>
 #include <string>
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/thread.hpp>
 #include <stdlib.h>
 #include <exception>
+#include <fstream>
 
 class Saminal{
 
