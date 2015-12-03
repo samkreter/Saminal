@@ -108,9 +108,18 @@ int Saminal::cat(std::string file){
     std::cerr<<"File was empty"<<std::endl;
     return -1;
 }
-std::string* Saminal::parse_args(std::string args){
-    return nullptr;
+std::vector<std::string> Saminal::parse_args(std::string args){
+    std::vector<std::string> tokens;
+    if(!args.empty()){
+
+        boost::algorithm::split(tokens, args, boost::is_any_of(" "));
+        return tokens;
+    }
+    std::cerr<<"Must pass string to parsers"<<std::endl;
+    //return an empty vector for an error
+    return tokens;
 }
+
 int Saminal::exec_basic(std::string* args){
     return -1;
 }
@@ -119,7 +128,7 @@ int Saminal::exec_added(std::string* args){
 }
 
 int Saminal::check_cmd_exit(std::string cmd){
-    for(std::string bcmd : basic_cmds){
+    for(auto bcmd : basic_cmds){
         if(bcmd == cmd){
             return 1;
         }
@@ -131,12 +140,18 @@ void Saminal::run(){
     std::cout<<"\n\nGet ready for the best terminal experience of your life.....\n\n\n\n";
     while(true){
         std::string command;
+
+        //print the pretty command thingy
         printColor(fs::current_path().string(),2);
+        //the $ makes it seem like a big boy terminal
         std::cout<<"$ ";
+
         std::cin>>command;
         if(command == "exit"){
             return;
         }
+
+
     }
 }
 

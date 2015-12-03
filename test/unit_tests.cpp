@@ -16,7 +16,7 @@ int main(){
     cout<<"STARTING TESTS"<<endl;
 
     Saminal s;
-    s.run();
+    s.parse_args(string("cmd hello there"));
     //basic_cmd_tester();
 
     cout<<"TESTS COMPLETE"<<endl;

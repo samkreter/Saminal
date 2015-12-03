@@ -3,8 +3,11 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 #include <boost/thread.hpp>
 #include <stdlib.h>
 #include <exception>
@@ -22,7 +25,7 @@ private:
     int pwd();
     int cat(std::string file);
     int check_cmd_exit(std::string cmd);
-    std::string* parse_args(std::string args);
+    std::vector<std::string> parse_args(std::string args);
     int exec_basic(std::string* args);
     int exec_added(std::string* args);
     void printColor(std::string text,int color);
