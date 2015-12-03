@@ -33,35 +33,52 @@ void Saminal::printColor(std::string text,int color){
 }
 
 int Saminal::ls(std::vector<std::string> args){
-    if(fs::exists(fs::current_path())){
+    if(args.size() > 0){
         fs::directory_iterator end_iter;
-        int lineCount = 0;
-        for(fs::directory_iterator iter(fs::current_path()); iter != end_iter; iter++){
-            if(iter->path().filename().string()[0] != '.'){
-                lineCount++;
-                if(fs::is_directory(iter->path())){
-                    printColor(iter->path().filename().string(),1);
-                }
-                else{
-                     printColor(iter->path().filename().string(),0);
-                }
+        fs::path relative_move;
+        //check if the user wants to list a different directory
+        (args.size() > 1) ? (relative_move = fs::path(args.at(1))) : (relative_move = fs::path(""));
 
-                std::cout<<"   ";
-                if(lineCount >= 5){
-                    lineCount = 0;
-                    std::cout<<std::endl;
+        int lineCount = 0;
+
+        try{
+            fs::path dirToLs = fs::canonical(relative_move,fs::current_path());
+            if(!fs::is_directory(dirToLs)){
+                throw std::runtime_error("");
+            }
+
+
+            for(fs::directory_iterator iter(dirToLs); iter != end_iter; iter++){
+                if(iter->path().filename().string()[0] != '.'){
+                    lineCount++;
+                    if(fs::is_directory(iter->path())){
+                        printColor(iter->path().filename().string(),1);
+                    }
+                    else{
+                         printColor(iter->path().filename().string(),0);
+                    }
+
+                    std::cout<<"   ";
+                    if(lineCount >= 5){
+                        lineCount = 0;
+                        std::cout<<std::endl;
+                    }
                 }
             }
+            return 1;
         }
-        return 1;
+        catch(...){
+            std::cerr<<"Could not list, either it doesn't exist or it is not a directory"<<std::endl;
+            return -1;
+        }
     }
-    std::cerr<<"currDir not correct for ls command"<<std::endl;
     return -1;
 }
 
 int Saminal::cd(std::vector<std::string> args){
-    if(!args.at(0).empty() && !args.at(1).empty()){
+    if(args.size() > 1){
         fs::path errorPath("");
+
         std::string sArg = args.at(1);
         if(sArg[0] == '~'){
             fs::path newPath(std::string(homeDir.string()) + sArg.erase(0,1));
@@ -89,7 +106,7 @@ int Saminal::cd(std::vector<std::string> args){
         std::cerr<<"Path "<<errorPath.string()<<" either doesn't exist or is not a directory"<<std::endl;
         return -1;
     }
-    std::cerr<<"Must pass path to the cd command"<<std::endl;
+    std::cerr<<"Must say which directory to change to: cd <directory>"<<std::endl;
     return -1;
 }
 
@@ -99,7 +116,7 @@ int Saminal::pwd(std::vector<std::string> args){
 }
 
 int Saminal::cat(std::vector<std::string> args){
-    if(!args.at(0).empty() && !args.at(1).empty()){
+    if(args.size() > 1){
         std::string line;
         std::ifstream myfile(args.at(1));
         if(myfile.is_open()){
@@ -111,14 +128,14 @@ int Saminal::cat(std::vector<std::string> args){
         std::cerr<<"File does not exist"<<std::endl;
         return -1;
     }
-    std::cerr<<"File was empty"<<std::endl;
+    std::cerr<<"Must provide a file to print out: cat <file>"<<std::endl;
     return -1;
 }
 std::vector<std::string> Saminal::parse_args(std::string args){
     std::vector<std::string> tokens;
     if(!args.empty()){
-
         boost::algorithm::split(tokens, args, boost::is_any_of(" "));
+
         return tokens;
     }
     std::cerr<<"Must pass string to parsers"<<std::endl;
@@ -127,8 +144,12 @@ std::vector<std::string> Saminal::parse_args(std::string args){
 }
 
 int Saminal::exec_basic(std::vector<std::string> args){
-    auto func = b_cmd_map[args.at(0)];
-    return (this->*func)(args);
+    if(args.size() > 0){
+        auto func = b_cmd_map[args.at(0)];
+        return (this->*func)(args);
+    }
+    std::cerr<<"Must provide a command"<<std::endl;
+    return -1;
 }
 int Saminal::exec_added(std::vector<std::string> args){
     return -1;
@@ -155,16 +176,15 @@ void Saminal::run(){
         //the $ makes it seem like a big boy terminal
         std::cout<<"$ ";
 
-        std::cin>>command;
+        std::getline(std::cin,command);
         if(command == "exit"){
             return;
         }
         cmd_list = parse_args(command);
         if(cmd_list.size() > 0){
             if(check_cmd_exist(cmd_list.at(0)) == 1){
-                if(exec_basic(cmd_list) > 0){
-                    continue;
-                }
+                exec_basic(cmd_list);
+                continue;
             }
             std::cerr<<"Commmand Doesn't exist"<<std::endl;
             continue;
