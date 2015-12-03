@@ -12,7 +12,7 @@
 
 class Saminal{
 
-    const std::string basic_cmd[4] = {"ls","cd","pwd","cat"};
+    const std::string basic_cmds[4] = {"ls","cd","pwd","cat"};
     boost::filesystem::path currDir;
     boost::filesystem::path homeDir;
 private:
@@ -20,8 +20,9 @@ private:
     int ls();
     int cd(std::string args);
     int pwd();
-    int cat();
-    std::string* parse_args(std::string* args);
+    int cat(std::string file);
+    int check_cmd_exit(std::string cmd);
+    std::string* parse_args(std::string args);
     int exec_basic(std::string* args);
     int exec_added(std::string* args);
     void printColor(std::string text,int color);

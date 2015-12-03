@@ -18,7 +18,7 @@ Saminal::Saminal(){
 }
 
 void Saminal::printColor(std::string text,int color){
-    std::string colorTable[2] = {"\033[1;31m","\033[1;36m"};
+    std::string colorTable[3] = {"\033[1;33m","\033[1;36m","\033[1;31m"};
     if(color >= 0 && color < (sizeof(colorTable)/sizeof(*colorTable))){
         std::cout<<colorTable[color]<<text<<"\033[0m";
     }
@@ -91,17 +91,24 @@ int Saminal::pwd(){
     return 1;
 }
 
-int Saminal::cat(){
-    std::string line;
-    fs::current_path(homeDir);
-    std::ifstream myfile("hey.txt");
-    if(myfile.is_open()){
-        std::getline(myfile,line);
-        std::cout<<line;
+int Saminal::cat(std::string file){
+    if(!file.empty()){
+        std::string line;
+        std::ifstream myfile(file);
+
+        if(myfile.is_open()){
+            while(std::getline(myfile,line)){
+               std::cout<<line<<std::endl;
+            }
+            return 1;
+        }
+        std::cerr<<"File does not exist"<<std::endl;
+        return -1;
     }
+    std::cerr<<"File was empty"<<std::endl;
     return -1;
 }
-std::string* Saminal::parse_args(std::string* args){
+std::string* Saminal::parse_args(std::string args){
     return nullptr;
 }
 int Saminal::exec_basic(std::string* args){
@@ -111,8 +118,26 @@ int Saminal::exec_added(std::string* args){
     return -1;
 }
 
+int Saminal::check_cmd_exit(std::string cmd){
+    for(std::string bcmd : basic_cmds){
+        if(bcmd == cmd){
+            return 1;
+        }
+    }
+    return 0;
+}
+
 void Saminal::run(){
-    std::cout<<std::string(homeDir.string()).erase(0,1);
+    std::cout<<"\n\nGet ready for the best terminal experience of your life.....\n\n\n\n";
+    while(true){
+        std::string command;
+        printColor(fs::current_path().string(),2);
+        std::cout<<"$ ";
+        std::cin>>command;
+        if(command == "exit"){
+            return;
+        }
+    }
 }
 
 
