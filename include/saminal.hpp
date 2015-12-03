@@ -12,22 +12,26 @@
 #include <stdlib.h>
 #include <exception>
 #include <fstream>
+#include <map>
+
+
 
 class Saminal{
-
-    const std::string basic_cmds[4] = {"ls","cd","pwd","cat"};
+    typedef int (Saminal::*FnPtr)(std::vector<std::string>);
+    //const std::string basic_cmds[4] = {"ls","cd","pwd","cat"};
+    std::map<std::string, FnPtr> b_cmd_map;
     boost::filesystem::path currDir;
     boost::filesystem::path homeDir;
 private:
     Saminal();
-    int ls();
-    int cd(std::string args);
-    int pwd();
-    int cat(std::string file);
-    int check_cmd_exit(std::string cmd);
+    int ls(std::vector<std::string>);
+    int cd(std::vector<std::string> args);
+    int pwd(std::vector<std::string>);
+    int cat(std::vector<std::string>);
+    int check_cmd_exist(std::string cmd);
     std::vector<std::string> parse_args(std::string args);
-    int exec_basic(std::string* args);
-    int exec_added(std::string* args);
+    int exec_basic(std::vector<std::string> args);
+    int exec_added(std::vector<std::string> args);
     void printColor(std::string text,int color);
 
 public:

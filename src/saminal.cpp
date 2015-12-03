@@ -2,7 +2,7 @@
 
 namespace fs = boost::filesystem;
 
-
+typedef int (Saminal::*FnPtr)(std::vector<std::string>);
 
     // fs::path full_path( fs::initial_path<fs::path>() );
     // cout<<full_path<<endl;
@@ -11,6 +11,11 @@ namespace fs = boost::filesystem;
 
 
 Saminal::Saminal(){
+    b_cmd_map["ls"] = &Saminal::ls;
+    b_cmd_map["pwd"] = &Saminal::pwd;
+    b_cmd_map["cat"] = &Saminal::cat;
+    b_cmd_map["cd"] = &Saminal::cd;
+
     homeDir = fs::path(getenv("HOME"));
     if(!fs::exists(homeDir) && !fs::is_directory(homeDir)){
          throw std::runtime_error("Error while starting home directory, this is a big issue");
@@ -25,7 +30,7 @@ void Saminal::printColor(std::string text,int color){
 
 }
 
-int Saminal::ls(){
+int Saminal::ls(std::vector<std::string> args){
     if(fs::exists(fs::current_path())){
         fs::directory_iterator end_iter;
         int lineCount = 0;
@@ -52,12 +57,12 @@ int Saminal::ls(){
     return -1;
 }
 
-int Saminal::cd(std::string args){
-    if(!args.empty()){
+int Saminal::cd(std::vector<std::string> args){
+    if(!args.at(0).empty()){
         fs::path errorPath("");
-
-        if(args[0] == '~'){
-            fs::path newPath(std::string(homeDir.string()) + args.erase(0,1));
+        std::string sArg = args.at(0);
+        if(sArg[0] == '~'){
+            fs::path newPath(std::string(homeDir.string()) + sArg.erase(0,1));
             if(fs::exists(newPath) && fs::is_directory(newPath)){
                 fs::current_path(newPath);
                 return 1;
@@ -65,7 +70,7 @@ int Saminal::cd(std::string args){
             errorPath = newPath;
         }
         else{
-            fs::path relative_move(args);
+            fs::path relative_move(sArg);
             try{
                 fs::path newCurrDir = fs::canonical(relative_move,fs::current_path());
                 if(fs::is_directory(newCurrDir)){
@@ -86,16 +91,15 @@ int Saminal::cd(std::string args){
     return -1;
 }
 
-int Saminal::pwd(){
+int Saminal::pwd(std::vector<std::string> args){
     std::cout<<fs::current_path().string()<<std::endl;
     return 1;
 }
 
-int Saminal::cat(std::string file){
-    if(!file.empty()){
+int Saminal::cat(std::vector<std::string> args){
+    if(!args.at(0).empty()){
         std::string line;
-        std::ifstream myfile(file);
-
+        std::ifstream myfile(args.at(0));
         if(myfile.is_open()){
             while(std::getline(myfile,line)){
                std::cout<<line<<std::endl;
@@ -120,16 +124,16 @@ std::vector<std::string> Saminal::parse_args(std::string args){
     return tokens;
 }
 
-int Saminal::exec_basic(std::string* args){
+int Saminal::exec_basic(std::vector<std::string> args){
     return -1;
 }
-int Saminal::exec_added(std::string* args){
+int Saminal::exec_added(std::vector<std::string> args){
     return -1;
 }
 
-int Saminal::check_cmd_exit(std::string cmd){
-    for(auto bcmd : basic_cmds){
-        if(bcmd == cmd){
+int Saminal::check_cmd_exist(std::string cmd){
+    for(auto bcmd : b_cmd_map){
+        if(bcmd.first == cmd){
             return 1;
         }
     }
@@ -140,7 +144,7 @@ void Saminal::run(){
     std::cout<<"\n\nGet ready for the best terminal experience of your life.....\n\n\n\n";
     while(true){
         std::string command;
-
+        std::vector<std::string> cmd_list;
         //print the pretty command thingy
         printColor(fs::current_path().string(),2);
         //the $ makes it seem like a big boy terminal
@@ -149,6 +153,16 @@ void Saminal::run(){
         std::cin>>command;
         if(command == "exit"){
             return;
+        }
+        cmd_list = parse_args(command);
+        if(cmd_list.size() > 0){
+            if(check_cmd_exist(cmd_list.at(0)) == 1){
+                if(exec_basic(cmd_list) > 0){
+                    continue;
+                }
+            }
+            std::cerr<<"Commmand Doesn't exist"<<std::endl;
+            continue;
         }
 
 
