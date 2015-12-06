@@ -17,12 +17,21 @@ int main(){
 
     basic_cmd_tester();
 
-    cout<<"TESTS COMPLETE"<<endl;
+    cout<<"ALL TESTS PASSED"<<endl;
 }
 
 void basic_cmd_tester(){
     Saminal s;
     vector<string> testPaths[6];
+
+    testPaths[0].push_back("cmd");
+    testPaths[1].push_back("cmd");
+    testPaths[2].push_back("cmd");
+    testPaths[3].push_back("cmd");
+    testPaths[4].push_back("cmd");
+    testPaths[5].push_back("cmd");
+
+
     testPaths[0].push_back("");
     testPaths[1].push_back("../bill");
     testPaths[2].push_back("~/Downloads");
@@ -66,6 +75,17 @@ void basic_cmd_tester(){
     //remove the file
     system("rm h767676765894938753ey.txt");
     //end test cat/////////////////////////
+
+
+    ///run test//////
+    try{
+        s.run();
+    }
+    catch(...){
+        cerr<<"Run test failed line:"<<__LINE__<<" in file:"<<__FILE__<<endl;
+        exit(-1);
+    }
+    ///
 }
 
 

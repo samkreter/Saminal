@@ -97,7 +97,7 @@ int Saminal::ls(std::vector<std::string> args){
 
 //see header file for comments
 int Saminal::cd(std::vector<std::string> args){
-    if(args.size() > 1){
+    if(args.size() > 1 && !args.at(1).empty()){
         //just to keep things even
         fs::path errorPath("");
 

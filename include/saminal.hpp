@@ -91,6 +91,17 @@ private:
     ///
     int exec_added(std::vector<std::string> args);
 
+
+    ///
+    /// joins to files based on a passed in delemitor (*not yet implemented)
+    ///
+    /// Planning to have as separte exec, all secandary cmds will be exected that
+    /// way to make it extremly easy to add cmds, just add the executable to the
+    /// "local" folder.
+    ///
+    /// planning on using c++11 native threads, and the c++11 mutex library
+    int join(std::vector<std::string> args);
+
     ///
     /// prints the passed in string all colory, nice helper function
     /// \param text: the text to be printed out
