@@ -1,63 +1,83 @@
 #include "../include/saminal.hpp"
 
+
+//max colors for the color printer
+#define MAX_COLORS 3
+
+//alias the filesystem namespace to make it easier
 namespace fs = boost::filesystem;
 
+//type def for the function pointer declaration
 typedef int (Saminal::*FnPtr)(std::vector<std::string>);
 
-    // fs::path full_path( fs::initial_path<fs::path>() );
-    // cout<<full_path<<endl;
-    // cout<<full_path.filename()<<endl;
-    // cout<<fs::is_directory(full_path.parent_path())<<endl;
-
-
+//see header file for comments
 Saminal::Saminal(){
 
+    //add the func pointers to the map for the basic commands
     b_cmd_map["ls"] = &Saminal::ls;
-    //insert(std::map<std::string, myFunc>::value_type("test", &Test::TestFunc));
     b_cmd_map["pwd"] = &Saminal::pwd;
     b_cmd_map["cat"] = &Saminal::cat;
     b_cmd_map["cd"] = &Saminal::cd;
 
+    //get the home directory env var for the system
     homeDir = fs::path(getenv("HOME"));
+
+    //make sure the env var is valid
     if(!fs::exists(homeDir) && !fs::is_directory(homeDir)){
          throw std::runtime_error("Error while starting home directory, this is a big issue");
     }
 }
 
+//see header file for comments
 void Saminal::printColor(std::string text,int color){
-    std::string colorTable[3] = {"\033[1;33m","\033[1;36m","\033[1;31m"};
+    //set up the array
+    std::string colorTable[MAX_COLORS] = {"\033[1;33m","\033[1;36m","\033[1;31m"};
+
+    //param check
     if(color >= 0 && color < (sizeof(colorTable)/sizeof(*colorTable))){
         std::cout<<colorTable[color]<<text<<"\033[0m";
     }
 
 }
 
+//see header file for comments
 int Saminal::ls(std::vector<std::string> args){
+    //param check
     if(args.size() > 0){
+
+        //set up dir iterators, man boost makes life easier
         fs::directory_iterator end_iter;
         fs::path relative_move;
+
         //check if the user wants to list a different directory
         (args.size() > 1) ? (relative_move = fs::path(args.at(1))) : (relative_move = fs::path(""));
 
         int lineCount = 0;
 
+        //gotta love try catches
         try{
+            //get the canonical path from the relative
             fs::path dirToLs = fs::canonical(relative_move,fs::current_path());
+
+            //make sure its a dir
             if(!fs::is_directory(dirToLs)){
                 throw std::runtime_error("");
             }
 
-
+            //iterate through the dir and print the contents
             for(fs::directory_iterator iter(dirToLs); iter != end_iter; iter++){
+                //if the file has a doc ignore it
                 if(iter->path().filename().string()[0] != '.'){
                     lineCount++;
+                    //print dirs one color
                     if(fs::is_directory(iter->path())){
                         printColor(iter->path().filename().string(),1);
                     }
+                    //and files a different color
                     else{
                          printColor(iter->path().filename().string(),0);
                     }
-
+                    //I only want five names on one line so its pretty
                     std::cout<<"   ";
                     if(lineCount >= 5){
                         lineCount = 0;
@@ -75,12 +95,17 @@ int Saminal::ls(std::vector<std::string> args){
     return -1;
 }
 
+//see header file for comments
 int Saminal::cd(std::vector<std::string> args){
     if(args.size() > 1){
+        //just to keep things even
         fs::path errorPath("");
 
         std::string sArg = args.at(1);
+
+        //check if user wants to go from the home dir
         if(sArg[0] == '~'){
+            //add the home direcctory to the path
             fs::path newPath(std::string(homeDir.string()) + sArg.erase(0,1));
             if(fs::exists(newPath) && fs::is_directory(newPath)){
                 fs::current_path(newPath);
@@ -90,6 +115,7 @@ int Saminal::cd(std::vector<std::string> args){
         }
         else{
             fs::path relative_move(sArg);
+            //try and make the canonical path from the relative path passed in
             try{
                 fs::path newCurrDir = fs::canonical(relative_move,fs::current_path());
                 if(fs::is_directory(newCurrDir)){
@@ -98,6 +124,7 @@ int Saminal::cd(std::vector<std::string> args){
                 }
                 errorPath = newCurrDir;
             }
+            //yea probably not best to catch everything but it works nicley here
             catch(...){
                 std::cerr<<"Path "<<relative_move.string()<<" either doesn't exist or is not a directory"<<std::endl;
                 return -1;
@@ -110,16 +137,25 @@ int Saminal::cd(std::vector<std::string> args){
     return -1;
 }
 
+
+//see header file for comments
 int Saminal::pwd(std::vector<std::string> args){
+    //simple enough, just print out the current path
+    //prob not used much since i put the working dir as the main line
     std::cout<<fs::current_path().string()<<std::endl;
     return 1;
 }
 
+//see header file for comments
 int Saminal::cat(std::vector<std::string> args){
     if(args.size() > 1){
+
         std::string line;
         std::ifstream myfile(args.at(1));
+
+        //check if the file was able to be opened
         if(myfile.is_open()){
+            //get the lines out and then print them to the screen
             while(std::getline(myfile,line)){
                std::cout<<line<<std::endl;
             }
@@ -131,9 +167,16 @@ int Saminal::cat(std::vector<std::string> args){
     std::cerr<<"Must provide a file to print out: cat <file>"<<std::endl;
     return -1;
 }
+
+//see header file for comments
 std::vector<std::string> Saminal::parse_args(std::string args){
+
     std::vector<std::string> tokens;
+    //param check
     if(!args.empty()){
+
+        //man, your the best boost, so many great things to make my life nice
+        //even though c++11 now comes with alot, I still like using good old boost
         boost::algorithm::split(tokens, args, boost::is_any_of(" "));
 
         return tokens;
@@ -143,45 +186,72 @@ std::vector<std::string> Saminal::parse_args(std::string args){
     return tokens;
 }
 
+//see header file for comments
 int Saminal::exec_basic(std::vector<std::string> args){
     if(args.size() > 0){
+        //call the basic command passed in and execte the func pointer for it
         auto func = b_cmd_map[args.at(0)];
         return (this->*func)(args);
     }
     std::cerr<<"Must provide a command"<<std::endl;
     return -1;
 }
+
+//see header file for comments
+//not needed for this milestone
 int Saminal::exec_added(std::vector<std::string> args){
     return -1;
 }
 
+
+//see header file for comments
 int Saminal::check_cmd_exist(std::string cmd){
-    for(auto bcmd : b_cmd_map){
-        if(bcmd.first == cmd){
-            return 1;
+    if(cmd.length() > 0){
+        for(auto bcmd : b_cmd_map){
+            if(bcmd.first == cmd){
+                return 1;
+            }
         }
     }
     return 0;
 }
 
+//see header file for comments
 void Saminal::run(){
+    //clear the current screen to make it look prettier
     system("clear");
+
+    //becasue I like saying things in my programs, I guess just to much time alone
     std::cout<<"\n\nGet ready for the best terminal experience of your life.....\n\n\n\n";
+
+    //the good old inintie loops
     while(true){
+
         std::string command;
         std::vector<std::string> cmd_list;
         //print the pretty command thingy
         std::cout<<std::endl;
+
+        //print the curr wd as the cool starting thingy
+        //also make it red cause that looks cool
         printColor(fs::current_path().string(),2);
+
         //the $ makes it seem like a big boy terminal
         std::cout<<"$ ";
 
+        //get that command from the user
         std::getline(std::cin,command);
+
+        //If they are tired of us, then i guess let them leave
         if(command == "exit"){
             return;
         }
+
+        //parse taht string into a vector list
         cmd_list = parse_args(command);
+
         if(cmd_list.size() > 0){
+            //if its a basic cmd, then execute that little guy
             if(check_cmd_exist(cmd_list.at(0)) == 1){
                 exec_basic(cmd_list);
                 continue;
