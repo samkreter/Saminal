@@ -7,7 +7,11 @@ Boost
 - For MacOS: `brew install boost`
 
 ### Usage
-#####Basic Commands
+######Running
+- Execute the runner executable to lanch the shell in normal mode
+- Execute the tester executable to run the unit tests, lanch the shell and catch errors which will fail the test.
+
+######Basic Commands
 - ls optional:[filePath/DirPath]
     - Lists the contents of the current directory or dir of passed in relative path
 - cd [DirPath]

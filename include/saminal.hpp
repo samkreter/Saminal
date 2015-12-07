@@ -30,10 +30,6 @@ class Saminal{
     boost::filesystem::path homeDir;
 
 private:
-    ///
-    /// Sets up the vars for the terminal from teh current system
-    ///
-    Saminal();
 
     ///
     /// list the contents of current dir or a passed in relative path to dir
@@ -110,6 +106,10 @@ private:
     void printColor(std::string text,int color);
 
 public:
+    ///
+    /// Sets up the vars for the terminal from teh current system
+    ///
+    Saminal();
 
     ///
     ///public interface to start the terminal

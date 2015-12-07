@@ -11,10 +11,15 @@ find_package(Boost 1.45.0 COMPONENTS filesystem thread system)
 if(Boost_FOUND)
     message(AUTHOR_WARNING:"Boost Libraries Found")
     include_directories(${Boost_INCLUDE_DIRS})
+
     add_library(saminal src/saminal.cpp)
     target_link_libraries(saminal ${Boost_LIBRARIES})
+
     add_executable(tester test/unit_tests.cpp)
     target_link_libraries(tester saminal)
+
+    add_executable(runner test/run.cpp)
+    target_link_libraries(runner saminal)
 endif()
 
 message(AUTHOR_WARNING:"If you do not see 'Boost Libraries Found' above then something went wrong")
