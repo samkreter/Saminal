@@ -214,10 +214,10 @@ index 0000000..02ad9c3
 \ No newline at end of file
 diff --git a/src/saminal.cpp b/src/saminal.cpp
 new file mode 100644
-index 0000000..f3b36cd
+index 0000000..e3b87f9
 --- /dev/null
 +++ b/src/saminal.cpp
-@@ -0,0 +1,268 @@
+@@ -0,0 +1,282 @@
 +#include "../include/saminal.hpp"
 +
 +
@@ -420,7 +420,14 @@ index 0000000..f3b36cd
 +
 +//see header file for comments
 +//not needed for this milestone
++//just fill in for skeleton
 +int Saminal::exec_added(std::vector<std::string> args){
++    if(args.size() > 1){
++        if(args.at(1) == "join"){
++            return this->join(args);
++        }
++    }
++    std::cerr<<"Failed params for exec added"<<std::endl;
 +    return -1;
 +}
 +
@@ -435,6 +442,13 @@ index 0000000..f3b36cd
 +        }
 +    }
 +    return 0;
++}
++
++
++//see header file for comments
++int Saminal::join(std::vector<std::string> args){
++    //check args for the right ones
++    return -1;
 +}
 +
 +//see header file for comments
@@ -486,6 +500,422 @@ index 0000000..f3b36cd
 +}
 +
 +
+diff --git a/submission.patch b/submission.patch
+new file mode 100644
+index 0000000..1ed0dc4
+--- /dev/null
++++ b/submission.patch
+@@ -0,0 +1,410 @@
++diff --git a/.gitignore b/.gitignore
++index b8bd026..a5c1267 100644
++--- a/.gitignore
+++++ b/.gitignore
++@@ -1,3 +1,7 @@
+++
+++*/_build
+++_build
+++
++ # Compiled Object files
++ *.slo
++ *.lo
++@@ -26,3 +30,19 @@
++ *.exe
++ *.out
++ *.app
+++
+++###CMake###
+++
+++CMakeCache.txt
+++CMakeFiles
+++Makefile
+++cmake_install.cmake
+++install_manifest.txt
+++
+++
+++###OSX###
+++
+++.DS_Store
+++.AppleDouble
+++.LSOverride
+++Icon
++diff --git a/CMakeLists.txt b/CMakeLists.txt
++new file mode 100644
++index 0000000..1a0b2fa
++--- /dev/null
+++++ b/CMakeLists.txt
++@@ -0,0 +1,23 @@
+++cmake_minimum_required (VERSION 2.8)
+++project (Saminal)
+++
+++set(CMAKE_CXX_FLAGS "--std=c++11 -g -Werror")
+++
+++set(Boost_USE_STATIC_LIBS OFF)
+++set(Boost_USE_MULTITHREADED ON)
+++set(Boost_USE_STATIC_RUNTIME OFF)
+++find_package(Boost 1.45.0 COMPONENTS filesystem thread system)
+++
+++if(Boost_FOUND)
+++    message(AUTHOR_WARNING:"Boost Libraries Found")
+++    include_directories(${Boost_INCLUDE_DIRS})
+++    add_library(saminal src/saminal.cpp)
+++    target_link_libraries(saminal ${Boost_LIBRARIES})
+++    add_executable(tester test/unit_tests.cpp)
+++    target_link_libraries(tester saminal)
+++endif()
+++
+++message(AUTHOR_WARNING:"If you do not see 'Boost Libraries Found' above then something went wrong")
+++
+++
+++
++diff --git a/README.md b/README.md
++index 9c2d7e7..a1902ec 100644
++--- a/README.md
+++++ b/README.md
++@@ -1,2 +1,19 @@
++ # Saminal
++ A simple implementation of a terminal built in c++
+++
+++### Dependencies
+++Boost
+++- For linux: `sudo apt-get install libboost-all-dev`
+++- For MacOS: `brew install boost`
+++
+++### Usage
+++#####Basic Commands
+++- ls optional:[filePath/DirPath]
+++    - Lists the contents of the current directory or dir of passed in relative path
+++- cd [DirPath]
+++    - Changes the current directory to the passed in relative path
+++    - use `~` for home starting from home directory
+++- cat [filePath]
+++    - Prints the contents of the passed in file to standard output
+++- pwd
+++    - Prints the current working directory
++\ No newline at end of file
++diff --git a/include/saminal.hpp b/include/saminal.hpp
++new file mode 100644
++index 0000000..02ad9c3
++--- /dev/null
+++++ b/include/saminal.hpp
++@@ -0,0 +1,121 @@
+++#ifndef SAMINAL_HPP__
+++#define SAMINAL_HPP__
+++
+++
+++//damn I got into using the pre existing headers
+++#include <iostream>
+++#include <string>
+++#include <vector>
+++#include <boost/filesystem.hpp>
+++#include <boost/filesystem/fstream.hpp>
+++#include <boost/algorithm/string/split.hpp>
+++#include <boost/algorithm/string/classification.hpp>
+++#include <boost/thread.hpp>
+++#include <stdlib.h>
+++#include <exception>
+++#include <fstream>
+++#include <map>
+++
+++
+++//its a greatly named class
+++class Saminal{
+++
+++    //typdef to make the func pointer declaration much nicer to read
+++    typedef int (Saminal::*FnPtr)(std::vector<std::string>);
+++
+++    //set the map up to holp basic cmd and their function pointers
+++    std::map<std::string, FnPtr> b_cmd_map;
+++
+++    //set the home directory from a env var of the system
+++    boost::filesystem::path homeDir;
+++
+++private:
+++    ///
+++    /// Sets up the vars for the terminal from teh current system
+++    ///
+++    Saminal();
+++
+++    ///
+++    /// list the contents of current dir or a passed in relative path to dir
+++    /// \param args: array of cmds, optional hold a path to a different dir
+++    /// \return: -1 for error, 1 for success
+++    ///
+++    int ls(std::vector<std::string> args);
+++
+++    ///
+++    /// changes current working directory
+++    /// \param args: the path for which directory to change, relative path or use ~ for home dir
+++    /// \return -1 for error, 1 for success
+++    ///
+++    int cd(std::vector<std::string> args);
+++
+++    ///
+++    /// prints the current working dir
+++    /// \param args: not used in this case, just to keep function pointers easy
+++    /// return: -1 for error, 1 for success
+++    ///
+++    int pwd(std::vector<std::string>);
+++
+++    ///
+++    /// prints passed in file contents to the console
+++    /// \param args: the path to the file
+++    /// \return: -1 for error, 1 for success
+++    ///
+++    int cat(std::vector<std::string>);
+++
+++    ///
+++    /// checks if cmd is basic, added or not there
+++    /// \param cmd: the cmd name
+++    /// \return: -1 for error, 0 for not found, 1 for basic, 2 for added
+++    ///
+++    int check_cmd_exist(std::string cmd);
+++
+++    ///
+++    /// parses arg string into a vector of cmds
+++    /// \param args: string form the user witht the cmds
+++    /// return: vector with the stuff, NULL vector for error
+++    ///
+++    std::vector<std::string> parse_args(std::string args);
+++
+++    ///
+++    /// exectues a basic cmd of the shell
+++    /// \param args: the arguments for the cmd
+++    /// return -1 for error, 1 for succcess
+++    ///
+++    int exec_basic(std::vector<std::string> args);
+++
+++    ///
+++    /// exectues an added cmd of the shell (* not yet used)
+++    /// \param args: args for the cmd
+++    /// \return -1 for error, 1 for success
+++    ///
+++    int exec_added(std::vector<std::string> args);
+++
+++
+++    ///
+++    /// joins to files based on a passed in delemitor (*not yet implemented)
+++    ///
+++    /// Planning to have as separte exec, all secandary cmds will be exected that
+++    /// way to make it extremly easy to add cmds, just add the executable to the
+++    /// "local" folder.
+++    ///
+++    /// planning on using c++11 native threads, and the c++11 mutex library
+++    int join(std::vector<std::string> args);
+++
+++    ///
+++    /// prints the passed in string all colory, nice helper function
+++    /// \param text: the text to be printed out
+++    /// \param color: the number of the color to print
+++    ///
+++    void printColor(std::string text,int color);
+++
+++public:
+++
+++    ///
+++    ///public interface to start the terminal
+++    ///
+++    void run();
+++};
+++
+++
+++#endif
++\ No newline at end of file
++diff --git a/src/saminal.cpp b/src/saminal.cpp
++new file mode 100644
++index 0000000..e3b87f9
++--- /dev/null
+++++ b/src/saminal.cpp
++@@ -0,0 +1,282 @@
+++#include "../include/saminal.hpp"
+++
+++
+++//max colors for the color printer
+++#define MAX_COLORS 3
+++
+++//alias the filesystem namespace to make it easier
+++namespace fs = boost::filesystem;
+++
+++//type def for the function pointer declaration
+++typedef int (Saminal::*FnPtr)(std::vector<std::string>);
+++
+++//see header file for comments
+++Saminal::Saminal(){
+++
+++    //add the func pointers to the map for the basic commands
+++    b_cmd_map["ls"] = &Saminal::ls;
+++    b_cmd_map["pwd"] = &Saminal::pwd;
+++    b_cmd_map["cat"] = &Saminal::cat;
+++    b_cmd_map["cd"] = &Saminal::cd;
+++
+++    //get the home directory env var for the system
+++    homeDir = fs::path(getenv("HOME"));
+++
+++    //make sure the env var is valid
+++    if(!fs::exists(homeDir) && !fs::is_directory(homeDir)){
+++         throw std::runtime_error("Error while starting home directory, this is a big issue");
+++    }
+++}
+++
+++//see header file for comments
+++void Saminal::printColor(std::string text,int color){
+++    //set up the array
+++    std::string colorTable[MAX_COLORS] = {"\033[1;33m","\033[1;36m","\033[1;31m"};
+++
+++    //param check
+++    if(color >= 0 && color < (sizeof(colorTable)/sizeof(*colorTable))){
+++        std::cout<<colorTable[color]<<text<<"\033[0m";
+++    }
+++
+++}
+++
+++//see header file for comments
+++int Saminal::ls(std::vector<std::string> args){
+++    //param check
+++    if(args.size() > 0){
+++
+++        //set up dir iterators, man boost makes life easier
+++        fs::directory_iterator end_iter;
+++        fs::path relative_move;
+++
+++        //check if the user wants to list a different directory
+++        (args.size() > 1) ? (relative_move = fs::path(args.at(1))) : (relative_move = fs::path(""));
+++
+++        int lineCount = 0;
+++
+++        //gotta love try catches
+++        try{
+++            //get the canonical path from the relative
+++            fs::path dirToLs = fs::canonical(relative_move,fs::current_path());
+++
+++            //make sure its a dir
+++            if(!fs::is_directory(dirToLs)){
+++                std::cout<<dirToLs.filename().string()<<std::endl;
+++                return 1;
+++            }
+++
+++            //iterate through the dir and print the contents
+++            for(fs::directory_iterator iter(dirToLs); iter != end_iter; iter++){
+++                //if the file has a doc ignore it
+++                if(iter->path().filename().string()[0] != '.'){
+++                    lineCount++;
+++                    //print dirs one color
+++                    if(fs::is_directory(iter->path())){
+++                        printColor(iter->path().filename().string(),1);
+++                    }
+++                    //and files a different color
+++                    else{
+++                         printColor(iter->path().filename().string(),0);
+++                    }
+++                    //I only want five names on one line so its pretty
+++                    std::cout<<"   ";
+++                    if(lineCount >= 5){
+++                        lineCount = 0;
+++                        std::cout<<std::endl;
+++                    }
+++                }
+++            }
+++            return 1;
+++        }
+++        catch(...){
+++            std::cerr<<"Could not list, either it doesn't exist or it is not a directory"<<std::endl;
+++            return -1;
+++        }
+++    }
+++    return -1;
+++}
+++
+++//see header file for comments
+++int Saminal::cd(std::vector<std::string> args){
+++    if(args.size() > 1 && !args.at(1).empty()){
+++        //just to keep things even
+++        fs::path errorPath("");
+++
+++        std::string sArg = args.at(1);
+++
+++        //check if user wants to go from the home dir
+++        if(sArg[0] == '~'){
+++            //add the home direcctory to the path
+++            fs::path newPath(std::string(homeDir.string()) + sArg.erase(0,1));
+++            if(fs::exists(newPath) && fs::is_directory(newPath)){
+++                fs::current_path(newPath);
+++                return 1;
+++            }
+++            errorPath = newPath;
+++        }
+++        else{
+++            fs::path relative_move(sArg);
+++            //try and make the canonical path from the relative path passed in
+++            try{
+++                fs::path newCurrDir = fs::canonical(relative_move,fs::current_path());
+++                if(fs::is_directory(newCurrDir)){
+++                    fs::current_path(newCurrDir);
+++                    return 1;
+++                }
+++                errorPath = newCurrDir;
+++            }
+++            //yea probably not best to catch everything but it works nicley here
+++            catch(...){
+++                std::cerr<<"Path "<<relative_move.string()<<" either doesn't exist or is not a directory"<<std::endl;
+++                return -1;
+++            }
+++        }
+++        std::cerr<<"Path "<<errorPath.string()<<" either doesn't exist or is not a directory"<<std::endl;
+++        return -1;
+++    }
+++    std::cerr<<"Must say which directory to change to: cd <directory>"<<std::endl;
+++    return -1;
+++}
+++
+++
+++//see header file for comments
+++int Saminal::pwd(std::vector<std::string> args){
+++    //simple enough, just print out the current path
+++    //prob not used much since i put the working dir as the main line
+++    std::cout<<fs::current_path().string()<<std::endl;
+++    return 1;
+++}
+++
+++//see header file for comments
+++int Saminal::cat(std::vector<std::string> args){
+++    if(args.size() > 1){
+++
+++        std::string line;
+++        std::ifstream myfile(args.at(1));
+++
+++        //check if the file was able to be opened
+++        if(myfile.is_open()){
+++            //get the lines out and then print them to the screen
+++            while(std::getline(myfile,line)){
+++               std::cout<<line<<std::endl;
+++            }
+++            return 1;
+++        }
+++        std::cerr<<"File does not exist"<<std::endl;
+++        return -1;
+++    }
+++    std::cerr<<"Must provide a file to print out: cat <file>"<<std::endl;
+++    return -1;
+++}
+++
+++//see header file for comments
+++std::vector<std::string> Saminal::parse_args(std::string args){
+++
+++    std::vector<std::string> tokens;
+++    //param check
+++    if(!args.empty()){
+++
+++        //man, your the best boost, so many great things to make my life nice
+++        //even though c++11 now comes with alot, I still like using good old boost
+++        boost::algorithm::split(tokens, args, boost::is_any_of(" "));
+++
+++        return tokens;
+++    }
+++    std::cerr<<"Must pass string to parsers"<<std::endl;
+++    //return an empty vector for an error
+++    return tokens;
+++}
+++
+++//see header file for comments
 diff --git a/test/unit_tests.cpp b/test/unit_tests.cpp
 new file mode 100644
 index 0000000..d7e74d7

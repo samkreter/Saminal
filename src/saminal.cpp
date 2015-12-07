@@ -200,7 +200,14 @@ int Saminal::exec_basic(std::vector<std::string> args){
 
 //see header file for comments
 //not needed for this milestone
+//just fill in for skeleton
 int Saminal::exec_added(std::vector<std::string> args){
+    if(args.size() > 1){
+        if(args.at(1) == "join"){
+            return this->join(args);
+        }
+    }
+    std::cerr<<"Failed params for exec added"<<std::endl;
     return -1;
 }
 
@@ -215,6 +222,13 @@ int Saminal::check_cmd_exist(std::string cmd){
         }
     }
     return 0;
+}
+
+
+//see header file for comments
+int Saminal::join(std::vector<std::string> args){
+    //check args for the right ones
+    return -1;
 }
 
 //see header file for comments
