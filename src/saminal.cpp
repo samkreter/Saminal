@@ -61,7 +61,8 @@ int Saminal::ls(std::vector<std::string> args){
 
             //make sure its a dir
             if(!fs::is_directory(dirToLs)){
-                throw std::runtime_error("");
+                std::cout<<dirToLs.filename().string()<<std::endl;
+                return 1;
             }
 
             //iterate through the dir and print the contents
