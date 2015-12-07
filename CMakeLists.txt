@@ -9,15 +9,12 @@ set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost 1.45.0 COMPONENTS filesystem thread system)
 
 if(Boost_FOUND)
-    message("Found Boost libraries")
     include_directories(${Boost_INCLUDE_DIRS})
     add_library(saminal src/saminal.cpp)
     target_link_libraries(saminal ${Boost_LIBRARIES})
     add_executable(tester test/unit_tests.cpp)
     target_link_libraries(tester saminal)
 endif()
-
-message("If boost libraries not found above please install them")
 
 
 
