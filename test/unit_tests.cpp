@@ -3,6 +3,10 @@
 #include <fstream>
 
 
+//this is a sketchy hack that turns all private functions into public ones
+// so I can unit test them. Probably not best practice but pretty usful for
+// something like this
+// Its gotta be before including the header file so it overrides it
 #define private public
 #include "../include/saminal.hpp"
 
@@ -24,6 +28,7 @@ void basic_cmd_tester(){
     Saminal s;
     vector<string> testPaths[6];
 
+    //gotta put a place holder for the commands
     testPaths[0].push_back("cmd");
     testPaths[1].push_back("cmd");
     testPaths[2].push_back("cmd");
@@ -32,6 +37,7 @@ void basic_cmd_tester(){
     testPaths[5].push_back("cmd");
 
 
+    //testing paths to make it easier
     testPaths[0].push_back("");
     testPaths[1].push_back("../bill");
     testPaths[2].push_back("~/Downloads");
@@ -50,6 +56,7 @@ void basic_cmd_tester(){
     //can go to home directory
     assert(s.cd(testPaths[2]) > 0);
     //end test cd//////////////////////////
+
 
     //test cat/////////////////////////////
 
@@ -78,6 +85,7 @@ void basic_cmd_tester(){
 
 
     ///run test//////
+    //make sure theres not exceptions during the run functions
     try{
         s.run();
     }
