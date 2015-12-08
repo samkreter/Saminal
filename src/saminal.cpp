@@ -237,10 +237,18 @@ int Saminal::check_cmd_exist(std::string cmd){
 //see header file for comments
 int Saminal::join(std::vector<std::string> args){
     //param check
-    if(args.size() > 5){
+    if(args.size() > 6){
         //make sure the files exist
         //gotta love that try catch though
         try{
+
+            int numFiles = stoi(args.at(1));
+
+            if(numFiles < 2 || args.size() < (3 + numFiles * 2)){
+                std::cerr<<"Must have at least 2 files: join <file1> <file1 column> <file2> <file2 column> <outputFile>"<<std::endl;
+                return -1;
+            }
+
             size_t f1Size = fs::file_size(args.at(1));
             size_t f2Size = fs::file_size(args.at(3));
 
