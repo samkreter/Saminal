@@ -4,6 +4,15 @@
 //max colors for the color printer
 #define MAX_COLORS 3
 
+//Just because I don't want to debug based on one file line
+#define SAFE_NET 5
+
+#define MAX_FILE_LINE 1024
+
+typedef struct fileLine{
+    char line[MAX_FILE_LINE+1];
+}_fileLine;
+
 //alias the filesystem namespace to make it easier
 namespace fs = boost::filesystem;
 
@@ -235,11 +244,80 @@ int Saminal::join(std::vector<std::string> args){
             size_t f1Size = fs::file_size(args.at(1));
             size_t f2Size = fs::file_size(args.at(3));
 
-            //get the columns
+            std::ifstream f1(args.at(1));
+            std::ifstream f2(args.at(3));
+
+            //this should work since we check the size of the file first but
+            // always good to re check just in case
+            if(!f1.is_open() || !f2.is_open()){
+                std::cerr<<"Error while opeing files"<<std::endl;
+                return -1;
+            }
+
+            //get the file line counts
+            int f1LCount = std::count(std::istreambuf_iterator<char>(f1), std::istreambuf_iterator<char>(), '\n');
+            int f2LCount = std::count(std::istreambuf_iterator<char>(f2), std::istreambuf_iterator<char>(), '\n');
+
+
+
+            //get the columns and make sure there good
             int col1 = stoi(args.at(2));
             int col2 = stoi(args.at(4));
             if(col1 <= 0 || col2 <= 0){
                 throw std::invalid_argument("");
+            }
+
+
+            int shmId;          // ID of shared memory segment
+            key_t shmKey = 123460;      // key to pass to shmget(), key_t is an IPC key type defined in sys/types
+            int shmFlag = IPC_CREAT | 0666; // Flag to create with rw permissions
+            _fileLine * shm;
+            pid_t pid;
+            unsigned long * sharedIndexPtr = NULL;
+
+            //create the shared memeory
+            if ((shmId = shmget(shmKey, (f1LCount + f2LCount + SAFE_NET) * sizeof(_fileLine), shmFlag)) < 0){
+                std::cerr << "Init: Failed to initialize shared memory (" << shmId << ")" << std::endl;
+                return -1;
+            }
+
+            if ((shm = (_fileLine *)shmat(shmId, NULL, 0)) == (_fileLine *) -1){
+                std::cerr << "Init: Failed to attach shared memory (" << shmId << ")" << std::endl;
+                return -1;
+            }
+
+            for(int i; i < numFiles; i++){
+                pid = fork();
+
+                if ( pid < 0 ){
+                    std::cerr << "Could not fork!!! ("<< pid <<")" << std::endl;
+                    return -1;
+                }
+                //this is the child taking over
+                else if (pid == 0){
+                    std::string line;
+
+                    f1.clear();
+                    f1.seekg(0);
+
+                    int index_count = 0;
+
+
+                    //add each line of the file to shared memory
+                    while ( std::getline (f1,line) ){
+                        std::strcpy(shm[index_count].line,line.c_str());
+                        index_count++;
+                    }
+
+                    //close the file and exit
+                    f1.close();
+                    exit(1);
+
+                }
+                else{
+                    o_files[i].close();
+                }
+
             }
 
         }

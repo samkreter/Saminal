@@ -12,9 +12,14 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/thread.hpp>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <exception>
 #include <fstream>
 #include <map>
+
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/wait.h>
 
 
 //its a greatly named class
