@@ -227,7 +227,33 @@ int Saminal::check_cmd_exist(std::string cmd){
 
 //see header file for comments
 int Saminal::join(std::vector<std::string> args){
-    //check args for the right ones
+    //param check
+    if(args.size() > 5){
+        //make sure the files exist
+        //gotta love that try catch though
+        try{
+            size_t f1Size = fs::file_size(args.at(1));
+            size_t f2Size = fs::file_size(args.at(3));
+
+            //get the columns
+            int col1 = stoi(args.at(2));
+            int col2 = stoi(args.at(4));
+            if(col1 <= 0 || col2 <= 0){
+                throw std::invalid_argument("");
+            }
+
+        }
+        catch(fs::filesystem_error& e){
+            std::cout<<"1 or more files could not be found, all files must be vaild to join :)"<<std::endl;
+            return -1;
+        }
+        catch(const std::invalid_argument){
+            std::cout<<"Must have valid column numbers for the files"<<std::endl;
+            return -1;
+        }
+
+    }
+    std::cerr<<"Not enough arguments: join <file1> <file1 column> <file2> <file2 column> <outputFile>"<<std::endl;
     return -1;
 }
 
