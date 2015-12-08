@@ -249,31 +249,36 @@ int Saminal::join(std::vector<std::string> args){
                 return -1;
             }
 
-            size_t f1Size = fs::file_size(args.at(1));
-            size_t f2Size = fs::file_size(args.at(3));
+            std::ifstream *o_files = new std::ifstream[numFiles];
+            int fLineCountSums[numFiles];
+            int columns[numFiles];
 
-            std::ifstream f1(args.at(1));
-            std::ifstream f2(args.at(3));
+            //set up all files and informations
+            for(int i = 0; i < numFiles; i++){
+                o_files[i].open(args.at(i*2+2));
 
-            //this should work since we check the size of the file first but
-            // always good to re check just in case
-            if(!f1.is_open() || !f2.is_open()){
-                std::cerr<<"Error while opeing files"<<std::endl;
-                return -1;
+                if(!o_files[i].is_open()){
+                    std::cout<<"1 or more files could not be found, all files must be vaild to join :)"<<std::endl;
+                    return -1;
+                }
+
+                fLineCountSums[i] = std::count(std::istreambuf_iterator<char>(o_files[i]), std::istreambuf_iterator<char>(), '\n') + 1;
+                std::cout<<"sumbefore:"<<i<<" "<<fLineCountSums[i]<<std::endl;
+                if(i != 0){
+                    fLineCountSums[i] += fLineCountSums[i-1];
+                }
+
+                std::cout<<"sum:"<<i<<" "<<fLineCountSums[i]<<std::endl;
+
+                //get the column to search for each file
+                columns[i] = stoi(args.at(i*2+3));
+
+                if(columns[i] <= 0 ){
+                    throw std::invalid_argument("");
+                }
             }
 
-            //get the file line counts
-            int f1LCount = std::count(std::istreambuf_iterator<char>(f1), std::istreambuf_iterator<char>(), '\n');
-            int f2LCount = std::count(std::istreambuf_iterator<char>(f2), std::istreambuf_iterator<char>(), '\n');
 
-
-
-            //get the columns and make sure there good
-            int col1 = stoi(args.at(2));
-            int col2 = stoi(args.at(4));
-            if(col1 <= 0 || col2 <= 0){
-                throw std::invalid_argument("");
-            }
 
 
             int shmId;          // ID of shared memory segment
@@ -284,7 +289,7 @@ int Saminal::join(std::vector<std::string> args){
             unsigned long * sharedIndexPtr = NULL;
 
             //create the shared memeory
-            if ((shmId = shmget(shmKey, (f1LCount + f2LCount + SAFE_NET) * sizeof(_fileLine), shmFlag)) < 0){
+            if ((shmId = shmget(shmKey, fLineCountSums[numFiles-1] * sizeof(_fileLine), shmFlag)) < 0){
                 std::cerr << "Init: Failed to initialize shared memory (" << shmId << ")" << std::endl;
                 return -1;
             }
@@ -305,33 +310,49 @@ int Saminal::join(std::vector<std::string> args){
                 else if (pid == 0){
                     std::string line;
 
-                    f1.clear();
-                    f1.seekg(0);
+                    //reset the file pointers
+                    o_files[i].clear();
+                    o_files[i].seekg(0);
 
                     int index_count = 0;
+                    int index_start = 0;
+                    if(i != 0){
+                        index_start = fLineCountSums[i-1];;
+                    }
 
 
                     //add each line of the file to shared memory
-                    while ( std::getline (f1,line) ){
-                        std::strcpy(shm[index_count].line,line.c_str());
+                    while ( std::getline (o_files[i],line) ){
+                        std::cout<<"file line: "<<line<<std::endl;
+                        std::strcpy(shm[index_count+index_start].line,line.c_str());
                         index_count++;
                     }
 
-                    //close the file and exit
-                    f1.close();
+                    //close the file in the child proc and exit
+                    o_files[i].close();
                     exit(1);
 
                 }
                 else{
+                    //close the file in the parent proc
                     o_files[i].close();
                 }
 
             }
 
-        }
-        catch(fs::filesystem_error& e){
-            std::cout<<"1 or more files could not be found, all files must be vaild to join :)"<<std::endl;
-            return -1;
+            //wait for all the child procs to finish
+            for(int i = 0; i < numFiles; i++){
+                wait(NULL);
+            }
+
+
+            for(int i=0; i<fLineCountSums[numFiles-1]; i++){
+                std::cout<<shm[i].line<<std::endl;
+            }
+
+            std::cout<<"all childs finish, parent auty"<<std::endl;
+            return 1;
+
         }
         catch(const std::invalid_argument){
             std::cout<<"Must have valid column numbers for the files"<<std::endl;
