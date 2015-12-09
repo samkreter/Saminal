@@ -377,6 +377,8 @@ int Saminal::join(std::vector<std::string> args){
                         std::vector<std::string> CheckerColumns;
                         //split the line into columns for each line of each file
                         boost::algorithm::split(CheckerColumns, shm[fLineCountSums[j-1]+k].line, boost::is_any_of(","));
+
+                        std::cout<<columns[j]-1<<"-"<<std::endl;
                         if(CheckerColumns.at(columns[j]-1) == checker){
                             found = true;
                             //erase the common elelment
