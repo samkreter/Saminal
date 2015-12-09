@@ -309,7 +309,7 @@ int Saminal::join(std::vector<std::string> args){
                 return -1;
             }
 
-            for(int i; i < numFiles; i++){
+            for(int i = 0; i < numFiles; i++){
                 pid = fork();
 
                 if ( pid < 0 ){
@@ -382,6 +382,7 @@ int Saminal::join(std::vector<std::string> args){
                             found = true;
                             //erase the common elelment
                             CheckerColumns.erase(CheckerColumns.begin()+(columns[j]-1));
+
                             Results_vector.push_back(CheckerColumns);
                         }
 
@@ -397,7 +398,8 @@ int Saminal::join(std::vector<std::string> args){
 
 
 
-            std::ofstream outputFile(args.at(numFiles*2+2));
+            std::ofstream outputFile;
+            outputFile.open(args.at(numFiles*2+2));
 
             for(int i=0; i<Final_output.size(); i++){
                 outputFile << Final_output[i] << std::endl;
