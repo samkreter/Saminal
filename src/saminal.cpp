@@ -211,9 +211,12 @@ int Saminal::exec_basic(std::vector<std::string> args){
 //not needed for this milestone
 //just fill in for skeleton
 int Saminal::exec_added(std::vector<std::string> args){
-    if(args.size() > 1){
-        if(args.at(1) == "join"){
+    if(args.size() > 0){
+        if(args.at(0) == "join"){
             return this->join(args);
+        }
+        else{
+            return 0;
         }
     }
     std::cerr<<"Failed params for exec added"<<std::endl;
@@ -257,7 +260,7 @@ int Saminal::join(std::vector<std::string> args){
             int numFiles = stoi(args.at(1));
 
             if(numFiles < 2 || args.size() < (3 + numFiles * 2)){
-                std::cerr<<"Must have at least 2 files: join <file1> <file1 column> <file2> <file2 column> <outputFile>"<<std::endl;
+                std::cerr<<"Must have at least 2 files: join <num of files> <fileX> <fileX column> ... <outputFile>"<<std::endl;
                 return -1;
             }
 
@@ -369,6 +372,7 @@ int Saminal::join(std::vector<std::string> args){
                 boost::algorithm::split(BaseColumns, shm[i].line, boost::is_any_of(","));
 
 
+
                 std::string checker = BaseColumns.at(columns[0]-1);
                 //loop through each of the other files
                 for(int j=1; j<numFiles; j++){
@@ -378,11 +382,11 @@ int Saminal::join(std::vector<std::string> args){
                         //split the line into columns for each line of each file
                         boost::algorithm::split(CheckerColumns, shm[fLineCountSums[j-1]+k].line, boost::is_any_of(","));
 
+
                         if(CheckerColumns.at(columns[j]-1) == checker){
                             found = true;
                             //erase the common elelment
                             CheckerColumns.erase(CheckerColumns.begin()+(columns[j]-1));
-
                             Results_vector.push_back(CheckerColumns);
                         }
 
@@ -413,16 +417,26 @@ int Saminal::join(std::vector<std::string> args){
             delete[] o_files;
 
             //delete the shrared mem, that stuff is scary
-            // if ((shmctl(shmId,IPC_RMID,0))==-1){
-            //     std::cerr<<"shared mem couldn't be deleted"<<std::endl;
-            //     return -1;
-            // }
+            if ((shmctl(shmId,IPC_RMID,0))==-1){
+                std::cerr<<"shared mem couldn't be deleted"<<std::endl;
+                return -1;
+            }
 
             return 1;
 
         }
         catch(const std::invalid_argument){
-            std::cout<<"Must have valid column numbers for the files"<<std::endl;
+            std::cerr<<"Must have valid column numbers for the files"<<std::endl;
+            return -1;
+        }
+        catch(const std::out_of_range){
+            std::cout<<"Please remove that stupid empty line at the end of the file\n";
+            std::cout<<"It's super anoying and this thing works great without it, so make that thing step off\n";
+            std::cout<<"Please try that nice command again with a file that isn't stupid :)\n";
+            return -1;
+        }
+        catch(...){
+            std::cerr<<"we got error bro"<<std::endl;
             return -1;
         }
 
@@ -470,6 +484,9 @@ void Saminal::run(){
             //if its a basic cmd, then execute that little guy
             if(check_cmd_exist(cmd_list.at(0)) == 1){
                 exec_basic(cmd_list);
+                continue;
+            }
+            else if(exec_added(cmd_list) != 0){
                 continue;
             }
             std::cerr<<"Commmand Doesn't exist"<<std::endl;

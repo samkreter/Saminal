@@ -1,0 +1,113 @@
+Code,Name,Continent,Region,LocalName,GovernmentForm,HeadOfState,Capital,Code2
+TWN,Taiwan,Asia,Eastern Asia,T’ai-wan,Republic,Chen Shui-bian,3263,TW
+SDN,Sudan,Africa,Northern Africa,As-Sudan,Islamic Republic,Omar Hassan Ahmad al-Bashir,3225,SD
+ECU,Ecuador,South America,South America,Ecuador,Republic,Gustavo Noboa Bejarano,594,EC
+CAF,Central African Republic,Africa,Central Africa,Centrafrique/Bê-Afrîka,Republic,Ange-Félix Patassé,1889,CF
+SOM,Somalia,Africa,Eastern Africa,Soomaaliya,Republic,Abdiqassim Salad Hassan,3214,SO
+SLB,Solomon Islands,Oceania,Melanesia,Solomon Islands,Constitutional Monarchy,Elisabeth II,3161,SB
+POL,Poland,Europe,Eastern Europe,Polska,Republic,Aleksander Kwasniewski,2928,PL
+BFA,Burkina Faso,Africa,Western Africa,Burkina Faso,Republic,Blaise Compaoré,549,BF
+VAT,Holy See (Vatican City State),Europe,Southern Europe,Santa Sede/Città del Vaticano,Independent Church State,Johannes Paavali II,3538,VA
+BVT,Bouvet Island,Antarctica,Antarctica,Bouvetøya,Dependent Territory of Norway,Harald V,NULL,BV
+SHN,Saint Helena,Africa,Western Africa,Saint Helena,Dependent Territory of the UK,Elisabeth II,3063,SH
+ETH,Ethiopia,Africa,Eastern Africa,YeItyop´iya,Republic,Negasso Gidada,756,ET
+MDG,Madagascar,Africa,Eastern Africa,Madagasikara/Madagascar,Federal Republic,Didier Ratsiraka,2455,MG
+PNG,Papua New Guinea,Oceania,Melanesia,Papua New Guinea/Papua Niugini,Constitutional Monarchy,Elisabeth II,2884,PG
+CXR,Christmas Island,Oceania,Australia and New Zealand,Christmas Island,Territory of Australia,Elisabeth II,1791,CX
+BIH,Bosnia and Herzegovina,Europe,Southern Europe,Bosna i Hercegovina,Federal Republic,Ante Jelavic,201,BA
+JPN,Japan,Asia,Eastern Asia,Nihon/Nippon,Constitutional Monarchy,Akihito,1532,JP
+KWT,Kuwait,Asia,Middle East,Al-Kuwayt,Constitutional Monarchy (Emirate),Jabir al-Ahmad al-Jabir al-Sabah,2429,KW
+BEN,Benin,Africa,Western Africa,Bénin,Republic,Mathieu Kérékou,187,BJ
+ANT,Netherlands Antilles,North America,Caribbean,Nederlandse Antillen,Nonmetropolitan Territory of The Netherlands,Beatrix,33,AN
+SWE,Sweden,Europe,Nordic Countries,Sverige,Constitutional Monarchy,Carl XVI Gustaf,3048,SE
+BHS,Bahamas,North America,Caribbean,The Bahamas,Constitutional Monarchy,Elisabeth II,148,BS
+ABW,Aruba,North America,Caribbean,Aruba,Nonmetropolitan Territory of The Netherlands,Beatrix,129,AW
+TON,Tonga,Oceania,Polynesia,Tonga,Monarchy,Taufa'ahau Tupou IV,3334,TO
+SLE,Sierra Leone,Africa,Western Africa,Sierra Leone,Republic,Ahmed Tejan Kabbah,3207,SL
+AZE,Azerbaijan,Asia,Middle East,Azärbaycan,Federal Republic,Heydär Äliyev,144,AZ
+LAO,Laos,Asia,Southeast Asia,Lao,Republic,Khamtay Siphandone,2432,LA
+RUS,Russian Federation,Europe,Eastern Europe,Rossija,Federal Republic,Vladimir Putin,3580,RU
+DEU,Germany,Europe,Western Europe,Deutschland,Federal Republic,Johannes Rau,3068,DE
+MKD,Macedonia,Europe,Southern Europe,Makedonija,Republic,Boris Trajkovski,2460,MK
+MDA,Moldova,Europe,Eastern Europe,Moldova,Republic,Vladimir Voronin,2690,MD
+LUX,Luxembourg,Europe,Western Europe,Luxembourg/Lëtzebuerg,Constitutional Monarchy,Henri,2452,LU
+HTI,Haiti,North America,Caribbean,Haïti/Dayti,Republic,Jean-Bertrand Aristide,929,HT
+ZMB,Zambia,Africa,Eastern Africa,Zambia,Republic,Frederick Chiluba,3162,ZM
+GMB,Gambia,Africa,Western Africa,The Gambia,Republic,Yahya Jammeh,904,GM
+MAR,Morocco,Africa,Northern Africa,Al-Maghrib,Constitutional Monarchy,Mohammed VI,2486,MA
+NIC,Nicaragua,North America,Central America,Nicaragua,Republic,Arnoldo Alemán Lacayo,2734,NI
+TZA,Tanzania,Africa,Eastern Africa,Tanzania,Republic,Benjamin William Mkapa,3306,TZ
+SVK,Slovakia,Europe,Eastern Europe,Slovensko,Republic,Rudolf Schuster,3209,SK
+FRO,Faroe Islands,Europe,Nordic Countries,Føroyar,Part of Denmark,Margrethe II,901,FO
+VUT,Vanuatu,Oceania,Melanesia,Vanuatu,Republic,John Bani,3537,VU
+MNP,Northern Mariana Islands,Oceania,Micronesia,Northern Mariana Islands,Commonwealth of the US,George W. Bush,2913,MP
+GNB,Guinea-Bissau,Africa,Western Africa,Guiné-Bissau,Republic,Kumba Ialá,927,GW
+TMP,East Timor,Asia,Southeast Asia,Timor Timur,Administrated by the UN,José Alexandre Gusmão,1522,TP
+EGY,Egypt,Africa,Northern Africa,Misr,Republic,Hosni Mubarak,608,EG
+GUY,Guyana,South America,South America,Guyana,Republic,Bharrat Jagdeo,928,GY
+CHN,China,Asia,Eastern Asia,Zhongquo,People'sRepublic,Jiang Zemin,1891,CN
+BHR,Bahrain,Asia,Middle East,Al-Bahrayn,Monarchy (Emirate),Hamad ibn Isa al-Khalifa,149,BH
+NLD,Netherlands,Europe,Western Europe,Nederland,Constitutional Monarchy,Beatrix,5,NL
+TGO,Togo,Africa,Western Africa,Togo,Republic,Gnassingbé Eyadéma,3332,TG
+SJM,Svalbard and Jan Mayen,Europe,Nordic Countries,Svalbard og Jan Mayen,Dependent Territory of Norway,Harald V,938,SJ
+TKL,Tokelau,Oceania,Polynesia,Tokelau,Nonmetropolitan Territory of New Zealand,Elisabeth II,3333,TK
+SYC,Seychelles,Africa,Eastern Africa,Sesel/Seychelles,Republic,France-Albert René,3206,SC
+KOR,South Korea,Asia,Eastern Asia,Taehan Min’guk (Namhan),Republic,Kim Dae-jung,2331,KR
+JOR,Jordan,Asia,Middle East,Al-Urdunn,Constitutional Monarchy,Abdullah II,1786,JO
+CPV,Cape Verde,Africa,Western Africa,Cabo Verde,Republic,António Mascarenhas Monteiro,1859,CV
+GNQ,Equatorial Guinea,Africa,Central Africa,Guinea Ecuatorial,Republic,Teodoro Obiang Nguema Mbasogo,2972,GQ
+URY,Uruguay,South America,South America,Uruguay,Republic,Jorge Batlle Ibáñez,3492,UY
+CRI,Costa Rica,North America,Central America,Costa Rica,Republic,Miguel Ángel Rodríguez Echeverría,584,CR
+JAM,Jamaica,North America,Caribbean,Jamaica,Constitutional Monarchy,Elisabeth II,1530,JM
+IRN,Iran,Asia,Southern and Central Asia,Iran,Islamic Republic,Ali Mohammad Khatami-Ardakani,1380,IR
+LSO,Lesotho,Africa,Southern Africa,Lesotho,Constitutional Monarchy,Letsie III,2437,LS
+GRD,Grenada,North America,Caribbean,Grenada,Constitutional Monarchy,Elisabeth II,916,GD
+IOT,British Indian Ocean Territory,Africa,Eastern Africa,British Indian Ocean Territory,Dependent Territory of the UK,Elisabeth II,NULL,IO
+TUV,Tuvalu,Oceania,Polynesia,Tuvalu,Constitutional Monarchy,Elisabeth II,3424,TV
+GAB,Gabon,Africa,Central Africa,Le Gabon,Republic,Omar Bongo,902,GA
+GUM,Guam,Oceania,Micronesia,Guam,US Territory,George W. Bush,921,GU
+PRK,North Korea,Asia,Eastern Asia,Choson Minjujuui In´min Konghwaguk (Bukhan),Socialistic Republic,Kim Jong-il,2318,KP
+GBR,United Kingdom,Europe,British Islands,United Kingdom,Constitutional Monarchy,Elisabeth II,456,GB
+TUR,Turkey,Asia,Middle East,Türkiye,Republic,Ahmet Necdet Sezer,3358,TR
+CHE,Switzerland,Europe,Western Europe,Schweiz/Suisse/Svizzera/Svizra,Federation,Adolf Ogi,3248,CH
+BDI,Burundi,Africa,Eastern Africa,Burundi/Uburundi,Republic,Pierre Buyoya,552,BI
+MHL,Marshall Islands,Oceania,Micronesia,Marshall Islands/Majol,Republic,Kessai Note,2507,MH
+MLT,Malta,Europe,Southern Europe,Malta,Republic,Guido de Marco,2484,MT
+PAN,Panama,North America,Central America,Panamá,Republic,Mireya Elisa Moscoso Rodríguez,2882,PA
+STP,Sao Tome and Principe,Africa,Central Africa,São Tomé e Príncipe,Republic,Miguel Trovoada,3172,ST
+USA,United States,North America,North America,United States,Federal Republic,George W. Bush,3813,US
+PER,Peru,South America,South America,Perú/Piruw,Republic,Valentin Paniagua Corazao,2890,PE
+TUN,Tunisia,Africa,Northern Africa,Tunis/Tunisie,Republic,Zine al-Abidine Ben Ali,3349,TN
+BTN,Bhutan,Asia,Southern and Central Asia,Druk-Yul,Monarchy,Jigme Singye Wangchuk,192,BT
+IND,India,Asia,Southern and Central Asia,Bharat/India,Federal Republic,Kocheril Raman Narayanan,1109,IN
+HND,Honduras,North America,Central America,Honduras,Republic,Carlos Roberto Flores Facussé,933,HN
+SPM,Saint Pierre and Miquelon,North America,North America,Saint-Pierre-et-Miquelon,Territorial Collectivity of France,Jacques Chirac,3067,PM
+ASM,American Samoa,Oceania,Polynesia,Amerika Samoa,US Territory,George W. Bush,54,AS
+PRY,Paraguay,South America,South America,Paraguay,Republic,Luis Ángel González Macchi,2885,PY
+MDV,Maldives,Asia,Southern and Central Asia,Dhivehi Raajje/Maldives,Republic,Maumoon Abdul Gayoom,2463,MV
+ISR,Israel,Asia,Middle East,Yisra’el/Isra’il,Republic,Moshe Katzav,1450,IL
+QAT,Qatar,Asia,Middle East,Qatar,Monarchy,Hamad ibn Khalifa al-Thani,2973,QA
+GIB,Gibraltar,Europe,Southern Europe,Gibraltar,Dependent Territory of the UK,Elisabeth II,915,GI
+GEO,Georgia,Asia,Middle East,Sakartvelo,Republic,Eduard Ševardnadze,905,GE
+MLI,Mali,Africa,Western Africa,Mali,Republic,Alpha Oumar Konaré,2482,ML
+AGO,Angola,Africa,Central Africa,Angola,Republic,José Eduardo dos Santos,56,AO
+MSR,Montserrat,North America,Caribbean,Montserrat,Dependent Territory of the UK,Elisabeth II,2697,MS
+PRI,Puerto Rico,North America,Caribbean,Puerto Rico,Commonwealth of the US,George W. Bush,2919,PR
+NRU,Nauru,Oceania,Micronesia,Naoero/Nauru,Republic,Bernard Dowiyogo,2728,NR
+SEN,Senegal,Africa,Western Africa,Sénégal/Sounougal,Republic,Abdoulaye Wade,3198,SN
+ERI,Eritrea,Africa,Eastern Africa,Ertra,Republic,Isayas Afewerki [Isaias Afwerki],652,ER
+DJI,Djibouti,Africa,Eastern Africa,Djibouti/Jibuti,Republic,Ismail Omar Guelleh,585,DJ
+KIR,Kiribati,Oceania,Micronesia,Kiribati,Republic,Teburoro Tito,2256,KI
+KEN,Kenya,Africa,Eastern Africa,Kenya,Republic,Daniel arap Moi,1881,KE
+HRV,Croatia,Europe,Southern Europe,Hrvatska,Republic,Štipe Mesic,2409,HR
+KHM,Cambodia,Asia,Southeast Asia,Kâmpuchéa,Constitutional Monarchy,Norodom Sihanouk,1800,KH
+MTQ,Martinique,North America,Caribbean,Martinique,Overseas Department of France,Jacques Chirac,2508,MQ
+TTO,Trinidad and Tobago,North America,Caribbean,Trinidad and Tobago,Republic,Arthur N. R. Robinson,3336,TT
+MNG,Mongolia,Asia,Eastern Asia,Mongol Uls,Republic,Natsagiin Bagabandi,2696,MN
+ESP,Spain,Europe,Southern Europe,España,Constitutional Monarchy,Juan Carlos I,653,ES
+GHA,Ghana,Africa,Western Africa,Ghana,Republic,John Kufuor,910,GH
+PYF,French Polynesia,Oceania,Polynesia,Polynésie française,Nonmetropolitan Territory of France,Jacques Chirac,3016,PF
+NER,Niger,Africa,Western Africa,Niger,Republic,Mamadou Tandja,2738,NE
+MCO,Monaco,Europe,Western Europe,Monaco,Constitutional Monarchy,Rainier III,2695,MC
+LBR,Liberia,Africa,Western Africa,Liberia,Republic,Charles Taylor,2440,LR
+HMD,Heard Island and McDonald Islands,Antarctica,Antarctica,Heard and McDonald Islands,Territory of Australia,Elisabeth II,NULL,HM

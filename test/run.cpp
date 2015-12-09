@@ -7,9 +7,10 @@
 using namespace std;
 
 int main(){
-    vector<string> test{"join","3","../test/test1.csv","1","../test/test2.csv","1","../test/test3.csv","1","hey.csv"};
+    vector<string> test{"join","3","../data/cities.csv","3","../data/country_stats.csv","1","../data/country_leadership.csv","1","hey.csv"};
     Saminal s;
     s.join(test);
+
 
     return 0;
 }
