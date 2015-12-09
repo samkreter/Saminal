@@ -212,6 +212,8 @@ int Saminal::exec_basic(std::vector<std::string> args){
 //just fill in for skeleton
 int Saminal::exec_added(std::vector<std::string> args){
     if(args.size() > 0){
+        //check for the right command
+        // right now only join, its lonley, has no friends
         if(args.at(0) == "join"){
             return this->join(args);
         }
@@ -236,14 +238,20 @@ int Saminal::check_cmd_exist(std::string cmd){
     return 0;
 }
 
+///
+/// Helper function to join the vector of vectors into one string
+/// \param vecs: vector of vectors to join together
+/// \return: the string of the combined vectors
+///
 std::string joinVectorsToString(std::vector<std::vector<std::string>> vecs){
+    //output string for the vectors
     std::string output;
 
     for(int i=0; i<vecs.size(); i++){
 
         output = output + boost::algorithm::join(vecs[i],",") + ",";
     }
-
+    //get that last ',' off the end
     output.pop_back();
 
     return output;
@@ -257,27 +265,43 @@ int Saminal::join(std::vector<std::string> args){
         //gotta love that try catch though
         try{
 
+            //the number of files to join together
             int numFiles = stoi(args.at(1));
 
+            //make sure theres at least 2 files and enough
+            // arguments for the amount of files
             if(numFiles < 2 || args.size() < (3 + numFiles * 2)){
                 std::cerr<<"Must have at least 2 files: join <num of files> <fileX> <fileX column> ... <outputFile>"<<std::endl;
                 return -1;
             }
 
+            //allocate an array of filepointers to hold all the files
             std::ifstream *o_files = new std::ifstream[numFiles];
+
+            //line sums, meaning the sum of the lines before it, this
+            // can be used to step in shared memory to the specific file
+            // that is needed to be accessed
             int fLineCountSums[numFiles];
+
+            //the column of each file to look at
             int columns[numFiles];
 
             //set up all files and informations
             for(int i = 0; i < numFiles; i++){
+                //open each file in the array
                 o_files[i].open(args.at(i*2+2));
 
+                //error checking
                 if(!o_files[i].is_open()){
                     std::cout<<"1 or more files could not be found, all files must be vaild to join :)"<<std::endl;
                     return -1;
                 }
 
+                //count the number of lines in each file
                 fLineCountSums[i] = std::count(std::istreambuf_iterator<char>(o_files[i]), std::istreambuf_iterator<char>(), '\n') + 1;
+
+                //if its not the first then add the lines of all the files before it
+                // kind of fibinoci-ish, thats where i got the idea
                 if(i != 0){
                     fLineCountSums[i] += fLineCountSums[i-1];
                 }
@@ -286,6 +310,7 @@ int Saminal::join(std::vector<std::string> args){
                 //get the column to search for each file
                 columns[i] = stoi(args.at(i*2+3));
 
+                //throw that exception, cause i think thats cool
                 if(columns[i] <= 0 ){
                     throw std::invalid_argument("");
                 }
@@ -293,7 +318,7 @@ int Saminal::join(std::vector<std::string> args){
 
 
 
-
+            //get all that shared mem stuff set up
             int shmId;          // ID of shared memory segment
             key_t shmKey = 123460;      // key to pass to shmget(), key_t is an IPC key type defined in sys/types
             int shmFlag = IPC_CREAT | 0666; // Flag to create with rw permissions
@@ -301,17 +326,21 @@ int Saminal::join(std::vector<std::string> args){
             pid_t pid;
             unsigned long * sharedIndexPtr = NULL;
 
+
             //create the shared memeory
             if ((shmId = shmget(shmKey, fLineCountSums[numFiles-1] * sizeof(_fileLine), shmFlag)) < 0){
                 std::cerr << "Init: Failed to initialize shared memory (" << shmId << ")" << std::endl;
                 return -1;
             }
 
+            //get the shared memory in the right address space
             if ((shm = (_fileLine *)shmat(shmId, NULL, 0)) == (_fileLine *) -1){
                 std::cerr << "Init: Failed to attach shared memory (" << shmId << ")" << std::endl;
                 return -1;
             }
 
+            //this loops through and forks enough procs to process each file
+            // 1 proc per file
             for(int i = 0; i < numFiles; i++){
                 pid = fork();
 
@@ -324,13 +353,15 @@ int Saminal::join(std::vector<std::string> args){
                     //string buffer for each line of the file
                     std::string line;
 
-                    //reset the file pointers
+                    //reset the file pointers, since I counted the lines they
+                    // are all set to the end of the file
                     o_files[i].clear();
                     o_files[i].seekg(0);
 
                     //make sure the separete files write to the right places
                     int index_count = 0;
                     int index_start = 0;
+
                     //weird off by one thing gotta check for
                     if(i != 0){
                         index_start = fLineCountSums[i-1];;
@@ -357,36 +388,51 @@ int Saminal::join(std::vector<std::string> args){
 
             //wait for all the child procs to finish
             for(int i = 0; i < numFiles; i++){
+                //probably not enough checks for the procs waiting but
+                // it works good for something like this
                 wait(NULL);
             }
 
+            //stores the final output of all matching lines
             std::vector<std::string> Final_output;
 
 
             //its time to get it, even though it is a 3 deep for loop, no worries
             for(int i=0; i<fLineCountSums[0]; i++){
+
+                //stores vectors of lines for each line of the first file to check
                 std::vector<std::vector<std::string>> Results_vector;
+
+                //holds a split vector of each line of the file
                 std::vector<std::string> BaseColumns;
+
+                //if somehting is found add the base part to the final output
                 bool found = false;
+
                 //get the columns of the line,
                 boost::algorithm::split(BaseColumns, shm[i].line, boost::is_any_of(","));
 
-
-
+                //get the column that we want to check against
                 std::string checker = BaseColumns.at(columns[0]-1);
+
                 //loop through each of the other files
                 for(int j=1; j<numFiles; j++){
+
                     //loop through each line in each of the files
                     for(int k=0; k<(fLineCountSums[j] - fLineCountSums[j-1]); k++){
+
                         std::vector<std::string> CheckerColumns;
+
                         //split the line into columns for each line of each file
                         boost::algorithm::split(CheckerColumns, shm[fLineCountSums[j-1]+k].line, boost::is_any_of(","));
 
-
+                        //if the columns are matched
                         if(CheckerColumns.at(columns[j]-1) == checker){
                             found = true;
+
                             //erase the common elelment
                             CheckerColumns.erase(CheckerColumns.begin()+(columns[j]-1));
+
                             Results_vector.push_back(CheckerColumns);
                         }
 
@@ -395,20 +441,24 @@ int Saminal::join(std::vector<std::string> args){
                 }
 
                 if(found){
+                    //if something was found join the base line and the found lines into
+                    // one nice happy little line where they can live happily ever after
                     Final_output.push_back(std::string(shm[i].line) + "," + joinVectorsToString(Results_vector));
                 }
 
             }
 
 
-
+            //get the output file all ready
             std::ofstream outputFile;
             outputFile.open(args.at(numFiles*2+2));
 
+            //add all the found lines to the output file
             for(int i=0; i<Final_output.size(); i++){
                 outputFile << Final_output[i] << std::endl;
             }
 
+            //close that thing, don't want that damn output file getting away
             outputFile.close();
 
 
@@ -421,21 +471,26 @@ int Saminal::join(std::vector<std::string> args){
                 return -1;
             }
 
+            //we done good job team
             std::cout<<"Completed join, output in "<<args.at(numFiles*2+2)<<std::endl;
-
             return 1;
 
         }
+        //if they input something thats not a number for a number spot
         catch(const std::invalid_argument){
             std::cerr<<"Must have valid column numbers for the files"<<std::endl;
             return -1;
         }
+        //this means you messed up with your data entry
         catch(const std::out_of_range){
             std::cout<<"Please remove that stupid empty line at the end of the file\n";
             std::cout<<"It's super anoying and this thing works great without it, so make that thing step off\n";
             std::cout<<"Please try that nice command again with a file that isn't stupid :)\n";
             return -1;
         }
+        //man I hope we never hit this,
+        // either way I don't want the whole thing to crash jsut becuase of a
+        // bad apple
         catch(...){
             std::cerr<<"we got error bro"<<std::endl;
             return -1;
