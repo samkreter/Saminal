@@ -346,21 +346,48 @@ int Saminal::join(std::vector<std::string> args){
             }
 
 
+            std::vector<int> Results_index;
 
-            for(int i=0; i<fLineCountSums[numFiles-1]; i++){
-                std::cout<<shm[i].line<<std::endl;
+            //its time to get it, even though it is a 3 deep for loop, no worries
+            for(int i=0; i<fLineCountSums[0]; i++){
+                std::vector<std::string> BaseColumns;
+                //get the columns of the line,
+                boost::algorithm::split(BaseColumns, shm[i].line, boost::is_any_of(","));
+
+
+                std::string checker = BaseColumns.at(columns[0]-1);
+                std::cout<<"checker: "<<checker<<std::endl;
+                //loop through each of the other files
+                for(int j=1; j<numFiles; j++){
+                    //loop through each line in each of the files
+                    for(int k=0; k<(fLineCountSums[j] - fLineCountSums[j-1]); k++){
+                        std::vector<std::string> CheckerColumns;
+                        //split the line into columns for each line of each file
+                        boost::algorithm::split(CheckerColumns, shm[fLineCountSums[j-1]+k].line, boost::is_any_of(","));
+                        if(CheckerColumns.at(columns[j]-1) == checker){
+                            std::cout<<"got 1"<<std::endl;
+                            Results_index.push_back(fLineCountSums[j-1]+k);
+                        }
+
+                    }
+                }
+
             }
 
+            std::cout<<"indexes: ";
+            for(int i=0; i<Results_index.size(); i++){
+                std::cout<<Results_index[i]<<" ";
+            }
 
 
             //delete the file array
             delete[] o_files;
 
             //delete the shrared mem, that stuff is scary
-            if ((shmctl(shmId,IPC_RMID,0))==-1){
-                std::cerr<<"shared mem couldn't be deleted"<<std::endl;
-                return -1;
-            }
+            // if ((shmctl(shmId,IPC_RMID,0))==-1){
+            //     std::cerr<<"shared mem couldn't be deleted"<<std::endl;
+            //     return -1;
+            // }
 
             std::cout<<"all childs finish, parent auty"<<std::endl;
             return 1;
