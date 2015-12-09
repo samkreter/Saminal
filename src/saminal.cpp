@@ -233,6 +233,18 @@ int Saminal::check_cmd_exist(std::string cmd){
     return 0;
 }
 
+std::string joinVectorsToString(std::vector<std::vector<std::string>> vecs){
+    std::string output;
+
+    for(int i=0; i<vecs.size(); i++){
+
+        output = output + boost::algorithm::join(vecs[i],",") + ",";
+    }
+
+    std::cout<<output;
+    exit(1);
+    return output;
+}
 
 //see header file for comments
 int Saminal::join(std::vector<std::string> args){
@@ -345,11 +357,12 @@ int Saminal::join(std::vector<std::string> args){
                 wait(NULL);
             }
 
+            std::vector<std::string> Final_output;
 
-            std::vector<int> Results_index;
 
             //its time to get it, even though it is a 3 deep for loop, no worries
             for(int i=0; i<fLineCountSums[0]; i++){
+                std::vector<std::vector<std::string>> Results_vector;
                 std::vector<std::string> BaseColumns;
                 //get the columns of the line,
                 boost::algorithm::split(BaseColumns, shm[i].line, boost::is_any_of(","));
@@ -359,24 +372,33 @@ int Saminal::join(std::vector<std::string> args){
                 std::cout<<"checker: "<<checker<<std::endl;
                 //loop through each of the other files
                 for(int j=1; j<numFiles; j++){
+                    bool found = false;
                     //loop through each line in each of the files
                     for(int k=0; k<(fLineCountSums[j] - fLineCountSums[j-1]); k++){
                         std::vector<std::string> CheckerColumns;
                         //split the line into columns for each line of each file
                         boost::algorithm::split(CheckerColumns, shm[fLineCountSums[j-1]+k].line, boost::is_any_of(","));
                         if(CheckerColumns.at(columns[j]-1) == checker){
+                            found = true;
                             std::cout<<"got 1"<<std::endl;
-                            Results_index.push_back(fLineCountSums[j-1]+k);
+                            //erase the common elelment
+                            CheckerColumns.erase(CheckerColumns.begin()+(columns[j]-1));
+                            Results_vector.push_back(CheckerColumns);
                         }
 
                     }
+
+                    if(found){
+                        Final_output.push_back(shm[i].line + joinVectorsToString(Results_vector));
+                    }
+
                 }
 
             }
 
             std::cout<<"indexes: ";
-            for(int i=0; i<Results_index.size(); i++){
-                std::cout<<Results_index[i]<<" ";
+            for(int i=0; i<Final_output.size(); i++){
+                std::cout<<Final_output[i]<<" ";
             }
 
 
@@ -402,6 +424,7 @@ int Saminal::join(std::vector<std::string> args){
     std::cerr<<"Not enough arguments: join <file1> <file1 column> <file2> <file2 column> <outputFile>"<<std::endl;
     return -1;
 }
+
 
 //see header file for comments
 void Saminal::run(){
