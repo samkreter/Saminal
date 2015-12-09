@@ -241,8 +241,8 @@ std::string joinVectorsToString(std::vector<std::vector<std::string>> vecs){
         output = output + boost::algorithm::join(vecs[i],",") + ",";
     }
 
-    std::cout<<output;
-    exit(1);
+    output.pop_back();
+
     return output;
 }
 
@@ -364,15 +364,14 @@ int Saminal::join(std::vector<std::string> args){
             for(int i=0; i<fLineCountSums[0]; i++){
                 std::vector<std::vector<std::string>> Results_vector;
                 std::vector<std::string> BaseColumns;
+                bool found = false;
                 //get the columns of the line,
                 boost::algorithm::split(BaseColumns, shm[i].line, boost::is_any_of(","));
 
 
                 std::string checker = BaseColumns.at(columns[0]-1);
-                std::cout<<"checker: "<<checker<<std::endl;
                 //loop through each of the other files
                 for(int j=1; j<numFiles; j++){
-                    bool found = false;
                     //loop through each line in each of the files
                     for(int k=0; k<(fLineCountSums[j] - fLineCountSums[j-1]); k++){
                         std::vector<std::string> CheckerColumns;
@@ -380,7 +379,6 @@ int Saminal::join(std::vector<std::string> args){
                         boost::algorithm::split(CheckerColumns, shm[fLineCountSums[j-1]+k].line, boost::is_any_of(","));
                         if(CheckerColumns.at(columns[j]-1) == checker){
                             found = true;
-                            std::cout<<"got 1"<<std::endl;
                             //erase the common elelment
                             CheckerColumns.erase(CheckerColumns.begin()+(columns[j]-1));
                             Results_vector.push_back(CheckerColumns);
@@ -388,17 +386,16 @@ int Saminal::join(std::vector<std::string> args){
 
                     }
 
-                    if(found){
-                        Final_output.push_back(shm[i].line + joinVectorsToString(Results_vector));
-                    }
+                }
 
+                if(found){
+                    Final_output.push_back(std::string(shm[i].line) + "," + joinVectorsToString(Results_vector));
                 }
 
             }
 
-            std::cout<<"indexes: ";
             for(int i=0; i<Final_output.size(); i++){
-                std::cout<<Final_output[i]<<" ";
+                std::cout<<Final_output[i]<<std::endl;
             }
 
 
@@ -411,7 +408,6 @@ int Saminal::join(std::vector<std::string> args){
             //     return -1;
             // }
 
-            std::cout<<"all childs finish, parent auty"<<std::endl;
             return 1;
 
         }
