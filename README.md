@@ -23,7 +23,7 @@ Boost
     - Prints the current working directory
 
 ######Added Commands
-- join <num of files> <fileX> <fileX column> ... <outputFile>
+- join [num of files] [fileX] [fileX column] ... [outputFile]
     - Joins the passed in file based on some like column
-    - **can handle N files**
+    - **Can handle N files**
     - Files can't have empty line at end of the file, for parsing reasons
