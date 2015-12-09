@@ -407,7 +407,6 @@ int Saminal::join(std::vector<std::string> args){
 
             for(int i=0; i<Final_output.size(); i++){
                 outputFile << Final_output[i] << std::endl;
-                std::cout<<Final_output[i]<<std::endl;
             }
 
             outputFile.close();
@@ -421,6 +420,8 @@ int Saminal::join(std::vector<std::string> args){
                 std::cerr<<"shared mem couldn't be deleted"<<std::endl;
                 return -1;
             }
+
+            std::cout<<"Completed join, output in "<<args.at(numFiles*2+2)<<std::endl;
 
             return 1;
 
