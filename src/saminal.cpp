@@ -263,12 +263,10 @@ int Saminal::join(std::vector<std::string> args){
                 }
 
                 fLineCountSums[i] = std::count(std::istreambuf_iterator<char>(o_files[i]), std::istreambuf_iterator<char>(), '\n') + 1;
-                std::cout<<"sumbefore:"<<i<<" "<<fLineCountSums[i]<<std::endl;
                 if(i != 0){
                     fLineCountSums[i] += fLineCountSums[i-1];
                 }
 
-                std::cout<<"sum:"<<i<<" "<<fLineCountSums[i]<<std::endl;
 
                 //get the column to search for each file
                 columns[i] = stoi(args.at(i*2+3));
@@ -308,14 +306,17 @@ int Saminal::join(std::vector<std::string> args){
                 }
                 //this is the child taking over
                 else if (pid == 0){
+                    //string buffer for each line of the file
                     std::string line;
 
                     //reset the file pointers
                     o_files[i].clear();
                     o_files[i].seekg(0);
 
+                    //make sure the separete files write to the right places
                     int index_count = 0;
                     int index_start = 0;
+                    //weird off by one thing gotta check for
                     if(i != 0){
                         index_start = fLineCountSums[i-1];;
                     }
@@ -323,7 +324,6 @@ int Saminal::join(std::vector<std::string> args){
 
                     //add each line of the file to shared memory
                     while ( std::getline (o_files[i],line) ){
-                        std::cout<<"file line: "<<line<<std::endl;
                         std::strcpy(shm[index_count+index_start].line,line.c_str());
                         index_count++;
                     }
@@ -346,8 +346,20 @@ int Saminal::join(std::vector<std::string> args){
             }
 
 
+
             for(int i=0; i<fLineCountSums[numFiles-1]; i++){
                 std::cout<<shm[i].line<<std::endl;
+            }
+
+
+
+            //delete the file array
+            delete[] o_files;
+
+            //delete the shrared mem, that stuff is scary
+            if ((shmctl(shmId,IPC_RMID,0))==-1){
+                std::cerr<<"shared mem couldn't be deleted"<<std::endl;
+                return -1;
             }
 
             std::cout<<"all childs finish, parent auty"<<std::endl;
