@@ -378,7 +378,6 @@ int Saminal::join(std::vector<std::string> args){
                         //split the line into columns for each line of each file
                         boost::algorithm::split(CheckerColumns, shm[fLineCountSums[j-1]+k].line, boost::is_any_of(","));
 
-                        std::cout<<columns[j]-1<<"-"<<std::endl;
                         if(CheckerColumns.at(columns[j]-1) == checker){
                             found = true;
                             //erase the common elelment
@@ -396,9 +395,16 @@ int Saminal::join(std::vector<std::string> args){
 
             }
 
+
+
+            std::ofstream outputFile(args.at(numFiles*2+2));
+
             for(int i=0; i<Final_output.size(); i++){
+                outputFile << Final_output[i] << std::endl;
                 std::cout<<Final_output[i]<<std::endl;
             }
+
+            outputFile.close();
 
 
             //delete the file array
@@ -419,7 +425,7 @@ int Saminal::join(std::vector<std::string> args){
         }
 
     }
-    std::cerr<<"Not enough arguments: join <file1> <file1 column> <file2> <file2 column> <outputFile>"<<std::endl;
+    std::cerr<<"Not enough arguments: join <num of files> <fileX> <fileX column> ... <outputFile>"<<std::endl;
     return -1;
 }
 
